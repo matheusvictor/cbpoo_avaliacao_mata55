@@ -8,12 +8,19 @@ import java.time.format.DateTimeFormatter;
 public class Congresso {
 
     private HashSet<Participante> participantes;
-    private Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner = new Scanner(System.in);
 
-    public Congresso() {
-        this.participantes = new HashSet<>();
+    private static Congresso congresso;
+    public static Congresso getInstance() {
+        if (congresso == null) {
+            congresso = new Congresso();
+        }
+        return congresso;
     }
 
+    private Congresso() {
+        this.participantes = new HashSet<>();
+    }
 
     public void imprimirMenu() {
         // TODO
