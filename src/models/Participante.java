@@ -25,6 +25,46 @@ public class Participante {
         this.inscricaoValida = false;
     }
 
+    public String getCpf() {
+        return cpf;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public String getTitulacaoAcademica() {
+        return titulacaoAcademica;
+    }
+
+    public String getInstituicaoDeVinculo() {
+        return instituicaoDeVinculo;
+    }
+
+    public void setValidacaoPendente(boolean validacaoPendente) {
+        this.validacaoPendente = validacaoPendente;
+    }
+
+    public boolean isValidacaoPendente() {
+        return validacaoPendente;
+    }
+
+    public void setInscricaoValida(boolean inscricaoValida) {
+        this.inscricaoValida = inscricaoValida;
+    }
+
+    public boolean isInscricaoValida() {
+        return inscricaoValida;
+    }
+
     @Override
     public String toString() {
         return "Participante{" +
