@@ -5,7 +5,8 @@ public class Main {
 
         Congresso cbpoo = Congresso.getInstance();
 
-        cbpoo.inscreverParticipantes();
+        cbpoo.inscreverParticipanteMock();
+        cbpoo.submeterArtigo();
 
     }
 }
