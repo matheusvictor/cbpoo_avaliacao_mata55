@@ -1,4 +1,4 @@
-package models;
+package models.participante;
 
 import java.time.LocalDate;
 
@@ -25,24 +25,48 @@ public class Participante {
         this.inscricaoValida = false;
     }
 
+    protected void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
     public String getCpf() {
         return cpf;
+    }
+
+    protected void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getNome() {
         return nome;
     }
 
+    protected void setSenha(String senha) {
+        this.senha = senha;
+    }
+
     public String getSenha() {
         return senha;
+    }
+
+    protected void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
     }
 
     public LocalDate getDataNascimento() {
         return dataNascimento;
     }
 
+    protected void setTitulacaoAcademica(String titulacaoAcademica) {
+        this.titulacaoAcademica = titulacaoAcademica;
+    }
+
     public String getTitulacaoAcademica() {
         return titulacaoAcademica;
+    }
+
+    protected void setInstituicaoDeVinculo(String instituicaoDeVinculo) {
+        this.instituicaoDeVinculo = instituicaoDeVinculo;
     }
 
     public String getInstituicaoDeVinculo() {

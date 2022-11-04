@@ -1,6 +1,6 @@
 package services;
 
-import models.Participante;
+import models.participante.Participante;
 
 import java.util.HashSet;
 import java.time.LocalDate;

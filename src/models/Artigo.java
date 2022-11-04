@@ -1,7 +1,7 @@
 package models;
 
-import models.especialista.AutorDeArtigo;
-import models.especialista.RevisorDeArtigo;
+import models.participante.especialista.Autor;
+import models.participante.especialista.Revisor;
 
 import java.util.List;
 import java.util.HashSet;
@@ -14,15 +14,15 @@ public class Artigo {
     protected int identificador;
     protected String titulo;
     protected String resumo;
-    protected HashSet<AutorDeArtigo> autores;
-    protected HashSet<RevisorDeArtigo> revisores;
+    protected HashSet<Autor> autores;
+    protected HashSet<Revisor> revisores;
     protected List<String> palavrasChave;
     protected int quantidadeDePaginas;
     protected LocalDate dataSubmissao;
 
 
     public Artigo(String titulo, String resumo, List<String> palavrasChave,
-                  int quantidadeDePaginas, HashSet<AutorDeArtigo> autores) {
+                  int quantidadeDePaginas, HashSet<Autor> autores) {
 
         this.identificador = contador;
         this.titulo = titulo;
@@ -48,11 +48,11 @@ public class Artigo {
         return resumo;
     }
 
-    public HashSet<AutorDeArtigo> getAutores() {
+    public HashSet<Autor> getAutores() {
         return autores;
     }
 
-    public HashSet<RevisorDeArtigo> getRevisores() {
+    public HashSet<Revisor> getRevisores() {
         return revisores;
     }
 

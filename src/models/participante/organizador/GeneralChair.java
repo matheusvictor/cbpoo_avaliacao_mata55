@@ -1,6 +1,6 @@
-package models.organizador;
+package models.participante.organizador;
 
-import models.Participante;
+import models.participante.Participante;
 
 import java.util.HashSet;
 

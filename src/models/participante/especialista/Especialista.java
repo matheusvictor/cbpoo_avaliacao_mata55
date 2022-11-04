@@ -1,10 +1,10 @@
-package models.especialista;
+package models.participante.especialista;
 
-import models.Participante;
+import models.participante.Participante;
 
 import java.time.LocalDate;
 
-public class Especialista extends Participante {
+public abstract class Especialista extends Participante {
 
     protected String especialidade;
 
@@ -13,4 +13,13 @@ public class Especialista extends Participante {
         super(cpf, nome, senha, dataNascimento, titulacaoAcademica, instituicaoDeVinculo);
         this.especialidade = especialidade;
     }
+
+    public String getEspecialidade() {
+        return especialidade;
+    }
+
+    public void setEspecialidade(String especialidade) {
+        this.especialidade = especialidade;
+    }
+
 }
