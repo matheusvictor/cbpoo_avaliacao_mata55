@@ -5,6 +5,7 @@ import java.time.LocalDate;
 public class Participante extends Pessoa {
 
     protected String senha;
+    protected boolean certificado;
     protected boolean inscricaoValida;
     protected boolean validacaoPendente;
 
@@ -12,24 +13,41 @@ public class Participante extends Pessoa {
                         LocalDate dataNascimento, String titulacaoAcademica, String instituicaoDeVinculo) {
         super(cpf, nome, dataNascimento, titulacaoAcademica, instituicaoDeVinculo);
         this.senha = senha;
+        this.certificado = false;
         this.inscricaoValida = false;
         this.validacaoPendente = true;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
     }
 
     public String getSenha() {
         return senha;
     }
 
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public boolean isCertificado() {
+        return certificado;
+    }
+
+    public void setCertificado(boolean certificado) {
+        this.certificado = certificado;
+    }
+
     public boolean isInscricaoValida() {
         return inscricaoValida;
     }
 
+    public void setInscricaoValida(boolean inscricaoValida) {
+        this.inscricaoValida = inscricaoValida;
+    }
+
     public boolean isValidacaoPendente() {
         return validacaoPendente;
+    }
+
+    public void setValidacaoPendente(boolean validacaoPendente) {
+        this.validacaoPendente = validacaoPendente;
     }
 
     @Override
