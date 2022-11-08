@@ -8,17 +8,17 @@ import java.util.List;
 
 public class Autor extends Especialista {
 
-    private ArrayList<Artigo> artigosPublicados;
+    private ArrayList<Artigo> artigosSubmetidos;
 
     public Autor(String cpf, String nome, LocalDate dataNascimento,
                  String titulacaoAcademica, String instituicaoDeVinculo, String especialidade) {
         super(cpf, nome, dataNascimento, titulacaoAcademica, instituicaoDeVinculo, especialidade);
-        this.artigosPublicados = new ArrayList<>();
+        this.artigosSubmetidos = new ArrayList<>();
     }
 
     public Artigo submeterArtigo(String titulo, String resumo, List<String> palavrasChave, int quantidadeDePaginas) {
         Artigo artigo = new Artigo(titulo, resumo, palavrasChave, quantidadeDePaginas);
-        this.artigosPublicados.add(artigo);
+        this.artigosSubmetidos.add(artigo);
         return artigo;
     }
 
