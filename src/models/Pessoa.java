@@ -6,7 +6,6 @@ public abstract class Pessoa implements Comparable<Pessoa> {
 
     protected String cpf;
     protected String nome;
-    protected String senha;
     protected LocalDate dataNascimento;
     protected String titulacaoAcademica;
     protected String instituicaoDeVinculo;
@@ -26,14 +25,6 @@ public abstract class Pessoa implements Comparable<Pessoa> {
 
     public String getNome() {
         return nome;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public String getSenha() {
-        return senha;
     }
 
     public LocalDate getDataNascimento() {
