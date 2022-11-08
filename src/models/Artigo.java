@@ -4,6 +4,7 @@ import models.especialistas.Autor;
 import models.especialistas.Revisor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class Artigo implements Comparable<Artigo> {
     protected int identificador;
     protected String titulo;
     protected String resumo;
+    protected ArrayList<String> avaliacoesRevisores;
     protected HashSet<Autor> autores;
     protected HashSet<Revisor> revisores;
     protected List<String> palavrasChave;
@@ -32,6 +34,7 @@ public class Artigo implements Comparable<Artigo> {
         this.autores = new HashSet<>();
         this.revisores = new HashSet<>();
         this.palavrasChave = palavrasChave;
+        this.avaliacoesRevisores = new ArrayList<>();
         this.quantidadeDePaginas = quantidadeDePaginas;
         this.aprovado = false;
         this.aguardandoAvaliacao = true;
@@ -60,12 +63,28 @@ public class Artigo implements Comparable<Artigo> {
         return autores;
     }
 
+    public void vincularRevisor(Revisor revisor) {
+        this.revisores.add(revisor);
+    }
+
     public HashSet<Revisor> getRevisores() {
         return revisores;
     }
 
+    public void setPalavrasChave(List<String> palavrasChave) {
+        this.palavrasChave = palavrasChave;
+    }
+
     public List<String> getPalavrasChave() {
         return palavrasChave;
+    }
+
+    public void adicionarAvaliacaoDoRevisor(String avaliacao) {
+        this.avaliacoesRevisores = avaliacoesRevisores;
+    }
+
+    public ArrayList<String> getAvaliacoesRevisores() {
+        return avaliacoesRevisores;
     }
 
     public int getQuantidadeDePaginas() {
