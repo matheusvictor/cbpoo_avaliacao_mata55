@@ -12,7 +12,7 @@ public class Participante extends Pessoa {
     public Participante(String cpf, String nome, String senha,
                         LocalDate dataNascimento, String titulacaoAcademica, String instituicaoDeVinculo) {
         super(cpf, nome, dataNascimento, titulacaoAcademica, instituicaoDeVinculo);
-        this.senha = senha;
+        this.senha = senha.trim();
         this.certificado = false;
         this.inscricaoValida = false;
         this.validacaoPendente = true;
@@ -22,7 +22,13 @@ public class Participante extends Pessoa {
         return senha;
     }
 
-    public void setSenha(String senha) {
+    public void alterarSenha(String novaSenha) {
+        if (!novaSenha.isEmpty()) {
+            this.setSenha(novaSenha.trim());
+        }
+    }
+
+    private void setSenha(String senha) {
         this.senha = senha;
     }
 
