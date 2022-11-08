@@ -1,18 +1,17 @@
 package models.especialistas;
 
 import models.Artigo;
-import models.Pessoa;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class Revisor extends Pessoa {
+public class Revisor extends Especialista {
 
     private ArrayList<Artigo> artigosRevisados;
 
     public Revisor(String cpf, String nome, LocalDate dataNascimento,
-                   String titulacaoAcademica, String instituicaoDeVinculo) {
-        super(cpf, nome, dataNascimento, titulacaoAcademica, instituicaoDeVinculo);
+                   String titulacaoAcademica, String instituicaoDeVinculo, String especialidade) {
+        super(cpf, nome, dataNascimento, titulacaoAcademica, instituicaoDeVinculo, especialidade);
         this.artigosRevisados = new ArrayList<>();
     }
 
