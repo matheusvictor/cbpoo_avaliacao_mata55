@@ -62,10 +62,10 @@ public class Congresso {
     public Participante inscreverParticipante(String cpf, String nome, String senha,
                                               String dataNascimento, String titulacaoAcademica, String instituicaoDeVinculo) {
 
-        //LocalDate dataNascimentoFormatada = converterDataParaLocalDate(dataNascimento);
-        LocalDate dataNascimentoFormatada = converterDataParaLocalDate("02/06/1998");
-        //Participante participante = new Participante(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
-        Participante participante = new Participante("123.456.789-00", "Lorem", "1234", dataNascimentoFormatada, "Bacharel", "UFBA");
+        LocalDate dataNascimentoFormatada = converterDataParaLocalDate(dataNascimento);
+        Participante participante = new Participante(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
+        // LocalDate dataNascimentoFormatada = converterDataParaLocalDate("02/06/1998");
+        // Participante participante = new Participante("123.456.789-00", "Lorem", "1234", dataNascimentoFormatada, "Bacharel", "UFBA");
         this.participantes.add(participante);
         return participante;
     }
