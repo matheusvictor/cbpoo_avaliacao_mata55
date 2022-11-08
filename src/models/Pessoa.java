@@ -2,7 +2,7 @@ package models;
 
 import java.time.LocalDate;
 
-public abstract class Pessoa {
+public abstract class Pessoa implements Comparable<Pessoa> {
 
     protected String cpf;
     protected String nome;
@@ -65,6 +65,11 @@ public abstract class Pessoa {
                 ", titulacaoAcademica='" + titulacaoAcademica + '\'' +
                 ", instituicaoDeVinculo='" + instituicaoDeVinculo + '\'' +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Pessoa o) {
+        return this.getNome().compareTo(o.getNome());
     }
 
 }
