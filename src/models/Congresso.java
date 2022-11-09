@@ -1,8 +1,11 @@
 package models;
 
+import exceptions.ParticipanteNaoEncontradoException;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static services.ConversorData.converterDataParaLocalDate;
 
@@ -10,9 +13,7 @@ public class Congresso {
 
     private static Congresso congresso;
     private ArrayList<Participante> participantes;
-    private ArrayList<Artigo> artigosSubmetidos;
-    private ArrayList<Artigo> artigosAceitos;
-    private ArrayList<Artigo> artigosNegados;
+    private ArrayList<Artigo> artigos;
 
     public static Congresso getInstance() {
         if (congresso == null) {
@@ -23,9 +24,7 @@ public class Congresso {
 
     private Congresso() {
         this.participantes = new ArrayList<>();
-        this.artigosSubmetidos = new ArrayList<>();
-        this.artigosAceitos = new ArrayList<>();
-        this.artigosNegados = new ArrayList<>();
+        this.artigos = new ArrayList<>();
     }
 
     public void imprimirMenu() {
@@ -51,9 +50,7 @@ public class Congresso {
     public Participante fazerLogin(String cpf, String senha) {
         if (!this.participantes.isEmpty()) {
             for (Participante p : this.participantes) {
-                if (p.getCpf().equals(cpf) && p.getSenha().equals(senha)) {
-                    return p;
-                }
+                //FIXME
             }
         }
         return null; // TODO: adicionar lançamento de Exception
@@ -96,35 +93,28 @@ public class Congresso {
         return null;
     }
 
-    private void ordenarArtigosEmOrdemAlfabetica(ArrayList<Artigo> artigos) {
-        Collections.sort(artigos);
+    public List<Artigo> listarArtigosNegadosEmOrdemAlfabetica() {
+        List<Artigo> artigosNegados = this.artigos.stream().filter(artigo -> !artigo.aprovado).toList();
+        return this.ordenarArtigosEmOrdemAlfabetica(artigosNegados);
     }
 
-    public void listarArtigosNegadosEmOrdemAlfabetica() {
-        if (this.artigosNegados != null) {
-            ordenarArtigosEmOrdemAlfabetica(this.artigosNegados);
-            for (Artigo a : this.artigosNegados) {
-                System.out.println(a);
-            }
-        }
-    }
-
-    public void listarArtigosAceitosEmOrdemAlfabetica() {
-        if (this.artigosAceitos != null) {
-            ordenarArtigosEmOrdemAlfabetica(this.artigosAceitos);
-            for (Artigo a : this.artigosAceitos) {
-                System.out.println(a);
-            }
-        }
+    public List<Artigo> listarArtigosAceitosEmOrdemAlfabetica() {
+        List<Artigo> artigosAceitos = this.artigos.stream().filter(artigo -> artigo.aprovado).toList();
+        return this.ordenarArtigosEmOrdemAlfabetica(artigosAceitos);
     }
 
     public void verDadosDeArtigo(int id) {
-        if (this.artigosSubmetidos != null)
-            for (Artigo artigo : this.artigosSubmetidos) {
+        if (this.artigos != null)
+            for (Artigo artigo : this.artigos) {
                 if (artigo.getIdentificador() == id) {
                     System.out.println(artigo);
                 }
             }
+    }
+
+    private List<Artigo> ordenarArtigosEmOrdemAlfabetica(List<Artigo> artigos) {
+        Collections.sort(artigos);
+        return artigos;
     }
 
 }
