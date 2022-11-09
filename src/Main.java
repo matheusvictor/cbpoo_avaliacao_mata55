@@ -1,3 +1,5 @@
+import exceptions.ArtigoNaoEncontradoException;
+import models.Artigo;
 import models.Pessoa;
 import models.Congresso;
 import models.Participante;
@@ -20,6 +22,7 @@ public class Main {
     private static Pessoa usuarioLogado = null;
 
     public static void imprimirCabecalhoMenu() {
+        System.out.println("============================================================");
         if (usuarioLogado instanceof ProgramChair) {
             System.out.println("CARGO: Program Chair");
         } else if (usuarioLogado instanceof GeneralChair) {
@@ -31,15 +34,19 @@ public class Main {
         }
         if (usuarioLogado != null) {
             System.out.println("Boas-vindas, " + usuarioLogado.getNome());
+            System.out.println("============================================================");
         }
     }
 
     public static void imprimirMenu() {
         Main.imprimirCabecalhoMenu();
-        System.out.println("============================================================");
         if (usuarioLogado == null) {
             System.out.println("1. Fazer login");
-            System.out.println("2. Inscrever-me");
+            System.out.println("2. Realizar inscrição");
+            System.out.println("3. Listar artigos aceitos em ordem alfabética");
+            System.out.println("4. Listar artigos negados em ordem alfabética");
+            System.out.println("5. Ver dados de um artigo");
+            System.out.println("6. Listar participantes em ordem alfabética");
         } else {
 
             System.out.println("1. Fazer log-out");
@@ -57,14 +64,14 @@ public class Main {
 
             System.out.println("9. Submeter artigo");
             System.out.println("10. Ver avaliações de um artigo");
-            System.out.println("11. Listar artigos aceitos em ordem alfabética");
-            System.out.println("12. Listar artigos negados em ordem alfabética");
-            System.out.println("13. Ver dados de um artigo");
-            System.out.println("14. Listar participantes em ordem alfabética");
+//            System.out.println("11. Listar artigos aceitos em ordem alfabética");
+//            System.out.println("12. Listar artigos negados em ordem alfabética");
+//            System.out.println("13. Ver dados de um artigo");
+//            System.out.println("14. Listar participantes em ordem alfabética");
+            System.out.println("Ou aperte qualquer outra tecla para voltar ao menu principal");
         }
 
         System.out.println("99. Encerrar o programa");
-//        System.out.println("Ou aperte qualquer outra tecla para voltar ao menu principal");
         System.out.println("============================================================");
 
         System.out.print("Digite uma opção: ");
@@ -123,9 +130,8 @@ public class Main {
             System.out.println("Qual a categoria do Participante?");
             System.out.println("GC - General Chair");
             System.out.println("PC - Program Chair");
-            System.out.println("Qualquer outra tecla para inscrever um participante comum");
-            System.out.print("Digite a sigla da categoria desejada: ");
-            categoria = scanner.next().toUpperCase();
+            System.out.print("Digite a sigla da categoria desejada ou qualquer outra tecla para inscrever um participante comum: ");
+            categoria = scanner.next().toUpperCase().trim();
 
             if (categoria.equals("GC")) {
                 participante = new GeneralChair(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
@@ -164,6 +170,20 @@ public class Main {
                 case 2 -> {
                     //TODO
                     Main.imprimirMenuCadastro();
+                }
+                case 5 -> {
+                    System.out.print("Digite o ID do artigo que procura: ");
+                    int id = scanner.nextInt();
+                    try {
+                        Artigo artigoEncontrado = congresso.buscarArtigoPorId(id);
+                        System.out.println(artigoEncontrado);
+                    } catch (ArtigoNaoEncontradoException exception) {
+                        System.err.println(exception.getMessage());
+                    }
+                }
+                case 6 -> {
+                    System.out.println("================== Lista de participantes ==================");
+                    congresso.listarParticipantesEmOrdemAlfabetica();
                 }
                 default -> {
                     System.out.println("Programa encerrado!");
