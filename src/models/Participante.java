@@ -2,40 +2,60 @@ package models;
 
 import java.time.LocalDate;
 
-public class Participante {
+public class Participante extends Pessoa {
 
-    protected String cpf;
-    protected String nome;
     protected String senha;
-    protected LocalDate dataNascimento;
-    protected String titulacaoAcademica;
-    protected String instituicaoDeVinculo;
-    protected boolean validacaoPendente;
+    protected boolean certificado;
     protected boolean inscricaoValida;
+    protected boolean validacaoPendente;
 
     public Participante(String cpf, String nome, String senha,
                         LocalDate dataNascimento, String titulacaoAcademica, String instituicaoDeVinculo) {
-        this.cpf = cpf;
-        this.nome = nome;
-        this.senha = senha;
-        this.dataNascimento = dataNascimento;
-        this.titulacaoAcademica = titulacaoAcademica;
-        this.instituicaoDeVinculo = instituicaoDeVinculo;
-        this.validacaoPendente = true;
+        super(cpf, nome, dataNascimento, titulacaoAcademica, instituicaoDeVinculo);
+        this.senha = senha.trim();
+        this.certificado = false;
         this.inscricaoValida = false;
+        this.validacaoPendente = true;
+    }
+
+    public boolean isCertificado() {
+        return certificado;
+    }
+
+    public void setCertificado(boolean certificado) {
+        this.certificado = certificado;
+    }
+
+    public boolean isInscricaoValida() {
+        return inscricaoValida;
+    }
+
+    public void setInscricaoValida(boolean inscricaoValida) {
+        this.inscricaoValida = inscricaoValida;
+    }
+
+    public boolean isValidacaoPendente() {
+        return validacaoPendente;
+    }
+
+    public void setValidacaoPendente(boolean validacaoPendente) {
+        this.validacaoPendente = validacaoPendente;
+    }
+
+    public boolean validarLogin(String cpf, String senha) {
+        return this.getCpf().equals(cpf) && this.senha.equals(senha);
     }
 
     @Override
     public String toString() {
         return "Participante{" +
-                "cpf='" + cpf + '\'' +
+                "inscricaoValida=" + inscricaoValida +
+                ", validacaoPendente=" + validacaoPendente +
+                ", cpf='" + cpf + '\'' +
                 ", nome='" + nome + '\'' +
-                ", senha='" + senha + '\'' +
                 ", dataNascimento=" + dataNascimento +
                 ", titulacaoAcademica='" + titulacaoAcademica + '\'' +
                 ", instituicaoDeVinculo='" + instituicaoDeVinculo + '\'' +
-                ", validacaoPendente=" + validacaoPendente +
-                ", inscricaoValida=" + inscricaoValida +
                 '}';
     }
 
