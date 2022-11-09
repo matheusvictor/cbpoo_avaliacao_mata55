@@ -18,21 +18,7 @@ public class Participante extends Pessoa {
         this.validacaoPendente = true;
     }
 
-    public String getSenha() {
-        return senha;
-    }
-
-    public void alterarSenha(String novaSenha) {
-        if (!novaSenha.isEmpty()) {
-            this.setSenha(novaSenha.trim());
-        }
-    }
-
-    private void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public boolean isCertificado() {
+   public boolean isCertificado() {
         return certificado;
     }
 
@@ -42,6 +28,10 @@ public class Participante extends Pessoa {
 
     public boolean isInscricaoValida() {
         return inscricaoValida;
+    }
+
+    public boolean validarLogin(String cpf, String senha) {
+        return  this.getCpf().equals(cpf) && this.senha.equals(senha);
     }
 
     public void setInscricaoValida(boolean inscricaoValida) {
