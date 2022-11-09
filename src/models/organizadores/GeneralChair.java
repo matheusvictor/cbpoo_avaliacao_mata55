@@ -12,13 +12,11 @@ public class GeneralChair extends Organizador {
     }
 
     public void validarInscricaoParticipante(Participante participante) {
-        participante.setEhParticipante(true);
         participante.setInscricaoValida(true);
         participante.setValidacaoPendente(false);
     }
 
     public void invalidarInscricaoParticipante(Participante participante) {
-        participante.setEhParticipante(false);
         participante.setInscricaoValida(false);
         participante.setValidacaoPendente(false);
     }
