@@ -48,15 +48,22 @@ public class Participante extends Pessoa {
 
     @Override
     public String toString() {
-        return "Participante{" +
-                "inscricaoValida=" + inscricaoValida +
-                ", validacaoPendente=" + validacaoPendente +
-                ", cpf='" + cpf + '\'' +
-                ", nome='" + nome + '\'' +
-                ", dataNascimento=" + dataNascimento +
-                ", titulacaoAcademica='" + titulacaoAcademica + '\'' +
-                ", instituicaoDeVinculo='" + instituicaoDeVinculo + '\'' +
-                '}';
+        String descricaoValidadeInscricao = "Não";
+        String descricaoPendenciaInscricao = "Não";
+        if (inscricaoValida) {
+            descricaoValidadeInscricao = "Sim";
+        }
+        if (isValidacaoPendente()) {
+            descricaoPendenciaInscricao = "Sim";
+        }
+        return "Nome: " + nome + "\n" +
+                "CPF: " + cpf + "\n" +
+                "Data de nascimento: " + dataNascimento + "\n" +
+                "Titulação acadêmica: " + titulacaoAcademica + "\n" +
+                "Instituição de vínculo: " + instituicaoDeVinculo + "\n" +
+                "Inscrição válida: " + descricaoValidadeInscricao + "\n" +
+                "Validação pendente: " + descricaoPendenciaInscricao;
+
     }
 
 }
