@@ -1,14 +1,15 @@
-import models.Pessoa;
+import exceptions.DataInvalidaException;
+import exceptions.ParticipanteNaoEncontradoException;
 import models.Congresso;
 import models.Participante;
+import models.Pessoa;
+import models.especialistas.Autor;
 import models.especialistas.Revisor;
 import models.organizadores.GeneralChair;
 import models.organizadores.ProgramChair;
 
-import exceptions.ParticipanteNaoEncontradoException;
-
-import java.util.Scanner;
 import java.time.LocalDate;
+import java.util.Scanner;
 
 import static services.ConversorData.converterDataParaLocalDate;
 
@@ -18,6 +19,21 @@ public class Main {
     private static final Congresso congresso = Congresso.getInstance();
     private static Pessoa usuarioLogado = null;
 
+    public static void imprimirCabecalhoMenu() {
+        if (usuarioLogado instanceof ProgramChair) {
+            System.out.println("CARGO: Program Chair");
+        } else if (usuarioLogado instanceof GeneralChair) {
+            System.out.println("CARGO: General Chair");
+        } else if (usuarioLogado instanceof Revisor) {
+            System.out.println("CARGO: Revisor(a) de artigo");
+        } else if (usuarioLogado instanceof Autor) {
+            System.out.println("CARGO: Autor(a) de artigo");
+        }
+        if (usuarioLogado != null) {
+            System.out.println("Boas-vindas, " + usuarioLogado.getNome());
+        }
+    }
+
     public static void imprimirMenu() {
         Main.imprimirCabecalhoMenu();
         System.out.println("============================================================");
@@ -25,6 +41,8 @@ public class Main {
             System.out.println("1. Fazer login");
             System.out.println("2. Inscrever-me");
         } else {
+
+            System.out.println("1. Fazer log-out");
 
             if (usuarioLogado instanceof GeneralChair) {
                 System.out.println("3. Validar inscrição");
@@ -45,7 +63,6 @@ public class Main {
             System.out.println("14. Listar participantes em ordem alfabética");
         }
 
-        System.out.println("0. Fazer log-out");
         System.out.println("99. Encerrar o programa");
 //        System.out.println("Ou aperte qualquer outra tecla para voltar ao menu principal");
         System.out.println("============================================================");
@@ -53,39 +70,28 @@ public class Main {
         System.out.print("Digite uma opção: ");
     }
 
-    public static void imprimirCabecalhoMenu() {
-        if (usuarioLogado instanceof ProgramChair) {
-            System.out.println("CARGO: Program Chair");
-        } else if (usuarioLogado instanceof GeneralChair) {
-            System.out.println("CARGO: General Chair");
-        }
-        if (usuarioLogado != null) {
-            System.out.println("Boas-vindas, " + usuarioLogado.getNome());
-        }
-    }
-
     public static void imprimirMenuLogin() {
-
         if (usuarioLogado == null) {
             try {
                 System.out.println("============================================================");
-                System.out.print("Digite o CPF: ");
+                System.out.print("Digite seu CPF: ");
                 String cpf = scanner.next();
-                System.out.print("Digite a senha: ");
+                System.out.print("Digite sua senha: ");
                 String senha = scanner.next();
-                usuarioLogado = Main.congresso.fazerLogin(cpf, senha);
+                usuarioLogado = congresso.fazerLogin(cpf, senha);
             } catch (ParticipanteNaoEncontradoException exception) {
                 System.err.println(exception.getMessage());
             }
         } else {
             usuarioLogado = null;
-            System.out.println("Usuário Deslogado Corretamente");
+            System.out.println("Log-out feito com sucesso!");
         }
         System.out.println("============================================================");
-
     }
 
     public static void imprimirMenuCadastro() {
+
+        Participante participante;
 
         System.out.print("Digite seu CPF: ");
         String cpf = scanner.next();
@@ -102,14 +108,19 @@ public class Main {
                 dataNascimentoFormatada = converterDataParaLocalDate(dataNascimento);
                 break;
             } catch (Exception exception) {
-                System.out.println("Data inválida!");
+                System.out.println(exception.getMessage());
             }
         }
 
-//        System.out.print("Digite sua titulação acadêmica: ");
-//        String titulacaoAcademica = scanner.next();
-//        System.out.print("Digite o nome da instituição na qual está vinculada(o): ");
-//        String instituicaoDeVinculo = scanner.next();
+        System.out.print("Digite sua titulação acadêmica: ");
+        String titulacaoAcademica = scanner.next();
+        System.out.print("Digite o nome da instituição na qual está vinculada(o): ");
+        String instituicaoDeVinculo = scanner.next();
+
+        participante = new Participante(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
+        congresso.addParticipante(participante);
+        usuarioLogado = participante;
+
 //
 //        Participante participante;
 //        if (usuarioLogado instanceof GeneralChair) {
@@ -123,18 +134,18 @@ public class Main {
 //            participante = new Participante(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
 //        }
 
-//        congresso.addParticipante(participante);
+
     }
 
 
     public static void main(String[] args) {
         GeneralChair admin = new GeneralChair(
-                "123",
+                "admin",
                 "admin",
                 "admin",
                 LocalDate.now(),
-                "Manda Chuva",
-                "Administrador do sistema"
+                "Administrador do sistema",
+                "CBPOO"
         );
         congresso.addParticipante(admin);
 
@@ -144,7 +155,11 @@ public class Main {
             opcao = scanner.nextInt();
             switch (opcao) {
                 case 1 -> Main.imprimirMenuLogin();
-                case 0 -> {
+                case 2 -> {
+                    //TODO
+                    Main.imprimirMenuCadastro();
+                }
+                default -> {
                     System.out.println("Programa encerrado!");
                     System.exit(0);
                 }
