@@ -1,13 +1,11 @@
 package models;
 
+import exceptions.ArtigoNaoEncontradoException;
 import exceptions.ParticipanteNaoEncontradoException;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static services.ConversorData.converterDataParaLocalDate;
 
 public class Congresso {
 
@@ -82,6 +80,7 @@ public class Congresso {
     public void listarParticipantesEmOrdemAlfabetica() {
         ordenarParticipantesEmOrdemAlfabetica(this.participantes);
         for (Participante p : this.participantes) {
+            System.out.println("============================================================");
             System.out.println(p);
         }
     }
@@ -96,8 +95,14 @@ public class Congresso {
         return this.ordenarArtigosEmOrdemAlfabetica(artigosAceitos);
     }
 
-    public Artigo buscarArtigo(int id) {
-        return this.artigos.stream().filter(a -> a.getIdentificador() == id).findFirst().orElse(null);
+    public Artigo buscarArtigoPorId(int id) throws ArtigoNaoEncontradoException {
+        Artigo artigo = this.artigos.stream().filter(a -> a.getIdentificador() == id).findFirst().orElse(null);
+
+        if (artigo == null) {
+            throw new ArtigoNaoEncontradoException();
+        }
+
+        return artigo;
     }
 
     public void verDadosDeArtigo(int id) {
