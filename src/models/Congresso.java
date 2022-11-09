@@ -103,6 +103,10 @@ public class Congresso {
         return this.ordenarArtigosEmOrdemAlfabetica(artigosAceitos);
     }
 
+    public Artigo buscarArtigo(int id) {
+        return this.artigos.stream().filter(a -> a.getIdentificador() == id).findFirst().orElse(null);
+    }
+
     public void verDadosDeArtigo(int id) {
         if (this.artigos != null)
             for (Artigo artigo : this.artigos) {
