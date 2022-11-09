@@ -47,24 +47,36 @@ public class Congresso {
         System.out.println("============================================================");
     }
 
-    public Participante fazerLogin(String cpf, String senha) {
-        if (!this.participantes.isEmpty()) {
-            for (Participante p : this.participantes) {
-                //FIXME
-            }
+    public Participante fazerLogin(String cpf, String senha) throws ParticipanteNaoEncontradoException {
+        Participante participante = this.participantes.stream()
+                .filter(p -> p.validarLogin(cpf, senha))
+                .findFirst()
+                .orElse(null);
+
+        if (participante == null) {
+            throw new ParticipanteNaoEncontradoException();
         }
-        return null; // TODO: adicionar lançamento de Exception
+
+        return participante;
     }
 
-    public Participante inscreverParticipante(String cpf, String nome, String senha,
-                                              String dataNascimento, String titulacaoAcademica, String instituicaoDeVinculo) {
-
-        LocalDate dataNascimentoFormatada = converterDataParaLocalDate(dataNascimento);
-        Participante participante = new Participante(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
-        // LocalDate dataNascimentoFormatada = converterDataParaLocalDate("02/06/1998");
-        // Participante participante = new Participante("123.456.789-00", "Lorem", "1234", dataNascimentoFormatada, "Bacharel", "UFBA");
+    public void addParticipante(Participante participante) {
         this.participantes.add(participante);
-        return participante;
+    }
+
+    private boolean participanteEstaInscrito(String cpf) {
+        if (!this.participantes.isEmpty()) {
+            for (Participante p : this.participantes) {
+                if (p.getCpf().equals(cpf)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public Artigo receberSubmissaoArtigo(Artigo artigo) {
+        return null;
     }
 
     public void listarParticipantesEmOrdemAlfabetica() {
@@ -72,10 +84,6 @@ public class Congresso {
         for (Participante p : this.participantes) {
             System.out.println(p);
         }
-    }
-
-    public Artigo receberSubmissaoArtigo(Artigo artigo) {
-        return null;
     }
 
     public List<Artigo> listarArtigosNegadosEmOrdemAlfabetica() {
@@ -104,17 +112,6 @@ public class Congresso {
     private List<Artigo> ordenarArtigosEmOrdemAlfabetica(List<Artigo> artigos) {
         Collections.sort(artigos);
         return artigos;
-    }
-
-    private boolean participanteEstaInscrito(String cpf) {
-        if (!this.participantes.isEmpty()) {
-            for (Participante p : this.participantes) {
-                if (p.getCpf().equals(cpf)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private List<Participante> ordenarParticipantesEmOrdemAlfabetica(List<Participante> participantes) {
