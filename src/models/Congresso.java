@@ -85,14 +85,14 @@ public class Congresso {
         }
     }
 
-    public List<Artigo> listarArtigosNegadosEmOrdemAlfabetica() {
-        List<Artigo> artigosNegados = this.artigos.stream().filter(artigo -> !artigo.aprovado).toList();
-        return this.ordenarArtigosEmOrdemAlfabetica(artigosNegados);
+    public List<Artigo> getArtigosNegadosEmOrdemAlfabetica() {
+        this.ordenarArtigosEmOrdemAlfabetica(this.artigos);
+        return this.artigos.stream().filter(artigo -> artigo.aprovado).toList();
     }
 
-    public List<Artigo> listarArtigosAceitosEmOrdemAlfabetica() {
-        List<Artigo> artigosAceitos = this.artigos.stream().filter(artigo -> artigo.aprovado).toList();
-        return this.ordenarArtigosEmOrdemAlfabetica(artigosAceitos);
+    public List<Artigo> getArtigosAceitosEmOrdemAlfabetica() {
+        this.ordenarArtigosEmOrdemAlfabetica(this.artigos);
+        return this.artigos.stream().filter(artigo -> artigo.aprovado).toList();
     }
 
     public Artigo buscarArtigoPorId(int id) throws ArtigoNaoEncontradoException {

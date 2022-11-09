@@ -10,6 +10,7 @@ import models.organizadores.ProgramChair;
 
 import exceptions.ParticipanteNaoEncontradoException;
 
+import java.util.List;
 import java.util.Scanner;
 import java.time.LocalDate;
 
@@ -168,8 +169,30 @@ public class Main {
             switch (opcao) {
                 case 1 -> Main.imprimirMenuLogin();
                 case 2 -> {
-                    //TODO
+                    //FIXME
                     Main.imprimirMenuCadastro();
+                }
+                case 3 -> {
+                    List<Artigo> artigosAceitos = congresso.getArtigosNegadosEmOrdemAlfabetica();
+                    if (artigosAceitos.isEmpty()) {
+                        System.out.println("============================================================");
+                        System.out.println("Não há artigos aceitos para serem listados!");
+                    } else {
+                        for (Artigo artigo : artigosAceitos) {
+                            System.out.println(artigo);
+                        }
+                    }
+                }
+                case 4 -> {
+                    List<Artigo> artigosNegados = congresso.getArtigosNegadosEmOrdemAlfabetica();
+                    if (artigosNegados.isEmpty()) {
+                        System.out.println("============================================================");
+                        System.out.println("Não há artigos negados para serem listados!");
+                    } else {
+                        for (Artigo artigo : artigosNegados) {
+                            System.out.println(artigo);
+                        }
+                    }
                 }
                 case 5 -> {
                     System.out.print("Digite o ID do artigo que procura: ");
