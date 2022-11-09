@@ -1,15 +1,15 @@
-import exceptions.DataInvalidaException;
-import exceptions.ParticipanteNaoEncontradoException;
+import models.Pessoa;
 import models.Congresso;
 import models.Participante;
-import models.Pessoa;
 import models.especialistas.Autor;
 import models.especialistas.Revisor;
 import models.organizadores.GeneralChair;
 import models.organizadores.ProgramChair;
 
-import java.time.LocalDate;
+import exceptions.ParticipanteNaoEncontradoException;
+
 import java.util.Scanner;
+import java.time.LocalDate;
 
 import static services.ConversorData.converterDataParaLocalDate;
 
@@ -100,7 +100,7 @@ public class Main {
         System.out.print("Digite sua senha: ");
         String senha = scanner.next();
 
-        LocalDate dataNascimentoFormatada = null;
+        LocalDate dataNascimentoFormatada;
         while (true) {
             System.out.print("Digite sua data de nascimento (dd/MM/aaaa): ");
             String dataNascimento = scanner.next();
@@ -117,26 +117,32 @@ public class Main {
         System.out.print("Digite o nome da instituição na qual está vinculada(o): ");
         String instituicaoDeVinculo = scanner.next();
 
-        participante = new Participante(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
+
+        if (usuarioLogado instanceof GeneralChair) {
+            String categoria;
+            System.out.println("Qual a categoria do Participante?");
+            System.out.println("GC - General Chair");
+            System.out.println("PC - Program Chair");
+            System.out.println("Qualquer outra tecla para inscrever um participante comum");
+            System.out.print("Digite a sigla da categoria desejada: ");
+            categoria = scanner.next().toUpperCase();
+
+            if (categoria.equals("GC")) {
+                participante = new GeneralChair(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
+            } else if (categoria.equals("PC")) {
+                participante = new ProgramChair(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
+            } else {
+                participante = new Participante(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
+            }
+
+            // Caso um General Chair esteja cadastrando um participante, este já deve ter a inscrição válida
+            participante.setInscricaoValida(true);
+        } else {
+            participante = new Participante(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
+        }
+
         congresso.addParticipante(participante);
-        usuarioLogado = participante;
-
-//
-//        Participante participante;
-//        if (usuarioLogado instanceof GeneralChair) {
-//            String categoria;
-//            if (categoria == "GC") {
-//                participante = new GeneralChair(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
-//            } else {
-//                participante = new ProgramChair(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
-//            }
-//        } else {
-//            participante = new Participante(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
-//        }
-
-
     }
-
 
     public static void main(String[] args) {
         GeneralChair admin = new GeneralChair(
