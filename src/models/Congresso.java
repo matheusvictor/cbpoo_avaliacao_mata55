@@ -67,23 +67,8 @@ public class Congresso {
         return participante;
     }
 
-    private boolean participanteEstaInscrito(String cpf) {
-        if (!this.participantes.isEmpty()) {
-            for (Participante p : this.participantes) {
-                if (p.getCpf().equals(cpf)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private void ordenarParticipantesEmOrdemAlfabetica() {
-        Collections.sort(this.participantes);
-    }
-
     public void listarParticipantesEmOrdemAlfabetica() {
-        ordenarParticipantesEmOrdemAlfabetica();
+        ordenarParticipantesEmOrdemAlfabetica(this.participantes);
         for (Participante p : this.participantes) {
             System.out.println(p);
         }
@@ -119,6 +104,22 @@ public class Congresso {
     private List<Artigo> ordenarArtigosEmOrdemAlfabetica(List<Artigo> artigos) {
         Collections.sort(artigos);
         return artigos;
+    }
+
+    private boolean participanteEstaInscrito(String cpf) {
+        if (!this.participantes.isEmpty()) {
+            for (Participante p : this.participantes) {
+                if (p.getCpf().equals(cpf)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private List<Participante> ordenarParticipantesEmOrdemAlfabetica(List<Participante> participantes) {
+        Collections.sort(participantes);
+        return participantes;
     }
 
 }
