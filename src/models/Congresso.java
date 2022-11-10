@@ -45,7 +45,7 @@ public class Congresso {
         System.out.println("============================================================");
     }
 
-    public Participante fazerLogin(String cpf, String senha) throws ParticipanteNaoEncontradoException {
+    public Participante fazerLogin(String cpf, String senha) throws Exception {
         Participante participante = this.participantes.stream()
                 .filter(p -> p.validarLogin(cpf, senha))
                 .findFirst()
@@ -53,6 +53,14 @@ public class Congresso {
 
         if (participante == null) {
             throw new ParticipanteNaoEncontradoException();
+        }
+
+        if (participante.isValidacaoPendente()) {
+            throw new Exception("Sua inscrição ainda está sendo analisada");
+        }
+
+        if (!participante.isInscricaoValida()) {
+            throw new Exception("Sua inscrição foi recusada!");
         }
 
         return participante;
