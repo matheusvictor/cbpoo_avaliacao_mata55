@@ -1,4 +1,5 @@
 import exceptions.ArtigoNaoEncontradoException;
+import exceptions.CpfJaCadastradoException;
 import models.Artigo;
 import models.Pessoa;
 import models.Congresso;
@@ -51,12 +52,12 @@ public class Main {
             System.out.println("7. Listar participantes em ordem alfabética");
         } else {
 
-            System.out.println("1. Fazer log-out");
+            System.out.println("0. Fazer log-out");
 
             if (usuarioLogado instanceof GeneralChair) {
                 System.out.println("8. Validar inscrição");
                 System.out.println("9. Emitir certificado");
-                System.out.println("10. Cadastrar organizadores");
+                System.out.println("10. Cadastrar participante");
             } else if (usuarioLogado instanceof ProgramChair) {
                 System.out.println("11. Avaliar artigo");
                 System.out.println("12. Rejeitar artigo");
@@ -65,7 +66,6 @@ public class Main {
             }
 
             System.out.println("14. Ver avaliações de um artigo");
-            System.out.println("Ou aperte qualquer outra tecla para voltar ao menu principal");
         }
 
         System.out.println("99. Encerrar o programa");
@@ -95,62 +95,74 @@ public class Main {
     public static void imprimirMenuCadastro() {
 
         Participante participante;
+        String cpf;
 
-        System.out.print("Digite seu CPF: ");
-        String cpf = scanner.next();
-        System.out.print("Digite seu nome: ");
-        String nome = scanner.next();
-        System.out.print("Digite sua senha: ");
-        String senha = scanner.next();
+        try {
+            System.out.print("Insira o CPF: ");
+            cpf = scanner.next().trim();
+            congresso.cpfJaCadastrado(cpf);
 
-        LocalDate dataNascimentoFormatada;
-        while (true) {
-            System.out.print("Digite sua data de nascimento (dd/MM/aaaa): ");
-            String dataNascimento = scanner.next();
-            try {
-                dataNascimentoFormatada = converterDataParaLocalDate(dataNascimento);
-                break;
-            } catch (Exception exception) {
-                System.out.println(exception.getMessage());
+            System.out.print("Insira o nome: ");
+            String nome = scanner.next();
+            System.out.print("Insira uma senha: ");
+            String senha = scanner.next().trim();
+
+            LocalDate dataNascimentoFormatada;
+            while (true) {
+                System.out.print("Digite sua data de nascimento (dd/MM/aaaa): ");
+                String dataNascimento = scanner.next();
+                try {
+                    dataNascimentoFormatada = converterDataParaLocalDate(dataNascimento);
+                    break;
+                } catch (Exception exception) {
+                    System.out.println(exception.getMessage());
+                }
             }
-        }
 
-        System.out.print("Digite sua titulação acadêmica: ");
-        String titulacaoAcademica = scanner.next();
-        System.out.print("Digite o nome da instituição na qual está vinculada(o): ");
-        String instituicaoDeVinculo = scanner.next();
+            System.out.print("Digite sua titulação acadêmica: ");
+            String titulacaoAcademica = scanner.next();
+            System.out.print("Digite o nome da instituição na qual está vinculada(o): ");
+            String instituicaoDeVinculo = scanner.next();
 
+            if (usuarioLogado instanceof GeneralChair) {
+                String categoria;
+                System.out.println("Qual a categoria do Participante?");
+                System.out.println("GC - General Chair");
+                System.out.println("PC - Program Chair");
+                System.out.print("Digite a sigla da categoria desejada ou qualquer outra tecla para inscrever um participante comum: ");
+                categoria = scanner.next().toUpperCase().trim();
 
-        if (usuarioLogado instanceof GeneralChair) {
-            String categoria;
-            System.out.println("Qual a categoria do Participante?");
-            System.out.println("GC - General Chair");
-            System.out.println("PC - Program Chair");
-            System.out.print("Digite a sigla da categoria desejada ou qualquer outra tecla para inscrever um participante comum: ");
-            categoria = scanner.next().toUpperCase().trim();
+                if (categoria.equals("GC")) {
+                    participante = new GeneralChair(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
+                } else if (categoria.equals("PC")) {
+                    participante = new ProgramChair(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
+                } else {
+                    participante = new Participante(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
+                }
 
-            if (categoria.equals("GC")) {
-                participante = new GeneralChair(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
-            } else if (categoria.equals("PC")) {
-                participante = new ProgramChair(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
+                // Caso um General Chair esteja cadastrando um participante
+                // seja ele um GC, PC ou qualquer outro, este já deve ter a inscrição válida
+                participante.setInscricaoValida(true);
+                participante.setValidacaoPendente(false);
             } else {
                 participante = new Participante(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
             }
 
-            // Caso um General Chair esteja cadastrando um participante
-            // seja ele um GC, PC ou qualquer outro, este já deve ter a inscrição válida
-            participante.setValidacaoPendente(false);
-            participante.setInscricaoValida(true);
-        } else {
-            participante = new Participante(cpf, nome, senha, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
+            congresso.addParticipante(participante);
+
+            if (participante.isInscricaoValida()) {
+                System.out.println("Inscrição realizada com sucesso!");
+            } else {
+                System.out.println("Inscrição submetida para avaliação.");
+            }
+
+        } catch (CpfJaCadastradoException e) {
+            System.out.println(e.getMessage());
         }
 
-        congresso.addParticipante(participante);
-
-        System.out.println("Inscrição submetida para avaliação.");
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws CpfJaCadastradoException {
 
         GeneralChair admin = new GeneralChair(
                 "admin",
@@ -210,6 +222,9 @@ public class Main {
                 case 7 -> {
                     System.out.println("================== Lista de participantes ==================");
                     congresso.listarParticipantesEmOrdemAlfabetica();
+                }
+                case 10 -> {
+                    //TODO: Cadastrar organizador
                 }
                 default -> {
                     System.out.println("Programa encerrado!");

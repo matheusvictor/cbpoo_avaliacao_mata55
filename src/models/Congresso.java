@@ -1,7 +1,6 @@
 package models;
 
-import exceptions.ArtigoNaoEncontradoException;
-import exceptions.ParticipanteNaoEncontradoException;
+import exceptions.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,11 +55,11 @@ public class Congresso {
         }
 
         if (participante.isValidacaoPendente()) {
-            throw new Exception("Sua inscrição ainda está sendo analisada");
+            throw new InscricaoPendenteException();
         }
 
         if (!participante.isInscricaoValida()) {
-            throw new Exception("Sua inscrição foi recusada!");
+            throw new InscricaoRecusadaException();
         }
 
         return participante;
@@ -70,11 +69,11 @@ public class Congresso {
         this.participantes.add(participante);
     }
 
-    private boolean participanteEstaInscrito(String cpf) {
+    public boolean cpfJaCadastrado(String cpf) throws CpfJaCadastradoException {
         if (!this.participantes.isEmpty()) {
             for (Participante p : this.participantes) {
                 if (p.getCpf().equals(cpf)) {
-                    return true;
+                    throw new CpfJaCadastradoException();
                 }
             }
         }
