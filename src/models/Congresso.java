@@ -2,9 +2,9 @@ package models;
 
 import exceptions.*;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class Congresso {
 
@@ -22,26 +22,6 @@ public class Congresso {
     private Congresso() {
         this.participantes = new ArrayList<>();
         this.artigos = new ArrayList<>();
-    }
-
-    public void imprimirMenu() {
-        System.out.println("============================================================");
-        System.out.println("1. Fazer login");
-        System.out.println("2. Inscrever participante");
-        System.out.println("3. Validar inscrição (exclusivo para general chair)");
-        System.out.println("4. Invalidar inscrição (exclusivo para general chair)");
-        System.out.println("5. Emitir certificado (exclusivo para general chair)");
-        System.out.println("6. Submeter artigo");
-        System.out.println("7. Enviar avaliação de artigo (exclusivo para revisores)");
-        System.out.println("8. Ver avaliações de um artigo");
-        System.out.println("9. Aceitar artigo (exclusivo para program chair)");
-        System.out.println("10. Rejeitar artigo (exclusivo para program chair)");
-        System.out.println("11. Listar artigos aceitos em ordem alfabética");
-        System.out.println("12. Listar artigos negados em ordem alfabética");
-        System.out.println("13. Ver dados de um artigo");
-        System.out.println("14. Listar participantes em ordem alfabética");
-        System.out.println("15. Encerrar o programa");
-        System.out.println("============================================================");
     }
 
     public Participante fazerLogin(String cpf, String senha) throws Exception {
@@ -65,11 +45,15 @@ public class Congresso {
         return participante;
     }
 
+    public void fazerLogout(Pessoa participante) {
+        if (participante != null) participante = null;
+    }
+
     public void addParticipante(Participante participante) {
         this.participantes.add(participante);
     }
 
-    public boolean cpfJaCadastrado(String cpf) throws CpfJaCadastradoException {
+    public void cpfJaCadastrado(String cpf) throws CpfJaCadastradoException {
         if (!this.participantes.isEmpty()) {
             for (Participante p : this.participantes) {
                 if (p.getCpf().equals(cpf)) {
@@ -77,11 +61,21 @@ public class Congresso {
                 }
             }
         }
-        return false;
     }
 
     public Artigo receberSubmissaoArtigo(Artigo artigo) {
         return null;
+    }
+
+    public Participante buscarParticipantePorCpf(String cpf) throws ParticipanteNaoEncontradoException {
+        Participante participante = this.participantes.stream()
+                .filter(p -> p.getCpf().equals(cpf)).findFirst().orElse(null);
+
+        if (participante == null) {
+            throw new ParticipanteNaoEncontradoException();
+        }
+
+        return participante;
     }
 
     public void listarParticipantesEmOrdemAlfabetica() {
