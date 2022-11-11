@@ -1,6 +1,7 @@
 package models;
 
 import exceptions.*;
+import models.organizadores.RootAdmin;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -79,10 +80,14 @@ public class Congresso {
     }
 
     public void listarParticipantesEmOrdemAlfabetica() {
+
         ordenarParticipantesEmOrdemAlfabetica(this.participantes);
+        int indice = 1;
         for (Participante p : this.participantes) {
-            System.out.println("============================================================");
-            System.out.println(p);
+            if (p instanceof RootAdmin) {
+                continue;
+            }
+            System.out.println(indice + ". " + p);
         }
     }
 
@@ -125,4 +130,11 @@ public class Congresso {
         return participantes;
     }
 
+    public ArrayList<Participante> getParticipantes() {
+        return participantes;
+    }
+
+    public ArrayList<Artigo> getArtigos() {
+        return artigos;
+    }
 }

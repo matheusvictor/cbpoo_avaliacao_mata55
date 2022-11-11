@@ -1,17 +1,18 @@
 import exceptions.*;
 import models.Artigo;
-import models.Pessoa;
 import models.Congresso;
 import models.Participante;
+import models.Pessoa;
 import models.especialistas.Autor;
 import models.especialistas.Revisor;
+import models.organizadores.RootAdmin;
 import models.organizadores.GeneralChair;
 import models.organizadores.ProgramChair;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.time.LocalDate;
 
 import static services.ConversorData.converterDataParaLocalDate;
 
@@ -37,15 +38,13 @@ public class Main {
         }
     }
 
-    public static void imprimirMenuGeral() {
+    public static void executarMenuListarParticipantes() {
+        System.out.println("================== Lista de participantes ==================");
+        if (congresso.getParticipantes().size() == 1) { // Sempre haverá 1 participante, que é o RootAdmin
+            System.out.println("Não há participantes cadastrados!");
+        } else congresso.listarParticipantesEmOrdemAlfabetica();
         System.out.println("============================================================");
-        System.out.println("1. Fazer login");
-        System.out.println("2. Realizar inscrição");
-        System.out.println("3. Submeter artigo");
-        System.out.println("4. Listar artigos aceitos em ordem alfabética");
-        System.out.println("5. Listar artigos negados em ordem alfabética");
-        System.out.println("6. Ver dados de um artigo");
-        System.out.println("7. Listar participantes em ordem alfabética");
+
     }
 
     public static void imprimirOpcoesGerais() {
@@ -67,37 +66,137 @@ public class Main {
         System.out.println("12. Rejeitar artigo");
     }
 
-    public static void imprimirMenu() {
-        imprimirCabecalhoMenu();
-        if (usuarioLogado == null) {
-            System.out.println("1. Fazer login");
-            System.out.println("2. Realizar inscrição");
-            System.out.println("3. Submeter artigo");
-            System.out.println("4. Listar artigos aceitos em ordem alfabética");
-            System.out.println("5. Listar artigos negados em ordem alfabética");
-            System.out.println("6. Ver dados de um artigo");
-            System.out.println("7. Listar participantes em ordem alfabética");
-        } else {
+    public static void executarMenuPrincipal() {
+        int opcao;
+        do {
+            try {
+                imprimirCabecalhoMenu();
 
-            System.out.println("0. Fazer log-out");
-            imprimirMenuGeral();
-            if (usuarioLogado instanceof GeneralChair) {
-                imprimirMenuGeneralChair();
-            } else if (usuarioLogado instanceof ProgramChair) {
-                imprimirMenuProgramChair();
-            } else if (usuarioLogado instanceof Revisor) {
-                System.out.println("13. Enviar avaliação de artigo");
+                if (usuarioLogado == null) {
+                    System.out.println("1. Fazer login");
+                } else {
+                    System.out.println("1. Fazer log-out");
+                }
+                System.out.println("2. Realizar inscrição");
+                System.out.println("3. Submeter artigo");
+                System.out.println("4. Listar artigos aceitos em ordem alfabética");
+                System.out.println("5. Listar artigos negados em ordem alfabética");
+                System.out.println("6. Ver dados de um artigo");
+                System.out.println("7. Listar participantes em ordem alfabética");
+
+                if (usuarioLogado != null) {
+                    if (usuarioLogado instanceof GeneralChair) {
+                        imprimirMenuGeneralChair();
+                    } else if (usuarioLogado instanceof ProgramChair) {
+                        imprimirMenuProgramChair();
+                    } else if (usuarioLogado instanceof Revisor) {
+                        System.out.println("13. Enviar avaliação de artigo");
+                    }
+
+                    System.out.println("14. Ver avaliações de um artigo");
+                }
+
+                System.out.println("99. Encerrar o programa");
+                System.out.println("============================================================");
+
+                do {
+                    try {
+                        System.out.print("Digite uma opção: ");
+                        opcao = Integer.parseInt(scanner.next());
+                        break;
+                    } catch (NumberFormatException err) {
+                        System.out.println("Entrada inválida. Digite novamente.");
+                    }
+                } while (true);
+                switch (opcao) {
+                    case 1 -> {
+                        if (usuarioLogado == null) {
+                            Main.executarMenuLogin();
+                        } else {
+                            usuarioLogado = null;
+                            System.out.println("Log-out realizado com sucesso!");
+                        }
+                    }
+                    case 2, 10 -> {
+                        Main.imprimirMenuCadastro();
+                    }
+                    case 3 -> {
+                        //TODO: Submissão de artigo
+                        imprimirMenuCadastroArtigo();
+                    }
+                    case 4 -> {
+                        List<Artigo> artigosAceitos = congresso.getArtigosNegadosEmOrdemAlfabetica();
+                        if (artigosAceitos.isEmpty()) {
+                            System.out.println("============================================================");
+                            System.out.println("Não há artigos aceitos para serem listados!");
+                        } else {
+                            for (Artigo artigo : artigosAceitos) {
+                                System.out.println(artigo);
+                            }
+                        }
+                    }
+                    case 5 -> {
+                        List<Artigo> artigosNegados = congresso.getArtigosNegadosEmOrdemAlfabetica();
+                        if (artigosNegados.isEmpty()) {
+                            System.out.println("============================================================");
+                            System.out.println("Não há artigos negados para serem listados!");
+                        } else {
+                            for (Artigo artigo : artigosNegados) {
+                                System.out.println(artigo);
+                            }
+                        }
+                    }
+                    case 6 -> {
+                        System.out.print("Digite o ID do artigo que procura: ");
+                        int id = scanner.nextInt();
+                        try {
+                            Artigo artigoEncontrado = congresso.buscarArtigoPorId(id);
+                            System.out.println(artigoEncontrado);
+                        } catch (ArtigoNaoEncontradoException exception) {
+                            System.err.println(exception.getMessage());
+                        }
+                    }
+                    case 7 -> {
+                        Main.executarMenuListarParticipantes();
+                    }
+                    case 8 -> {
+                        //TODO: validar inscrição
+                        try {
+                            System.out.print("CPF da(o) participante que deseja validar inscrição: ");
+                            String cpf = scanner.next().trim();
+                            Participante participante = congresso.buscarParticipantePorCpf(cpf);
+                            System.out.print("Deseja S ou N: ");
+                            String validadeInscricao = scanner.next().trim().toUpperCase();
+
+                            if (usuarioLogado instanceof GeneralChair) {
+                                if (validadeInscricao.startsWith("S")) {
+                                    ((GeneralChair) usuarioLogado).validarInscricaoParticipante(participante);
+                                    System.out.println("Inscrição validada com sucesso!");
+                                } else {
+                                    ((GeneralChair) usuarioLogado).invalidarInscricaoParticipante(participante);
+                                    System.out.println("Inscrição invalidada com sucesso!");
+                                }
+                            }
+
+                        } catch (ParticipanteNaoEncontradoException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    }
+                    //TODO: Cadastrar organizador
+                    case 99 -> {
+                        System.out.println("Programa encerrado!");
+                        System.exit(0);
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                break;
             }
 
-            System.out.println("14. Ver avaliações de um artigo");
-        }
-
-        System.out.println("99. Encerrar o programa");
-        System.out.println("============================================================");
-        System.out.print("Digite uma opção: ");
+        } while (true);
     }
 
-    public static void imprimirMenuLogin() {
+    public static void executarMenuLogin() {
         if (usuarioLogado == null) {
             try {
                 System.out.println("============================================================");
@@ -240,107 +339,17 @@ public class Main {
     }
 
     public static void main(String[] args) {
-
-        GeneralChair admin = new GeneralChair(
-                "admin",
-                "admin",
-                "admin",
+        RootAdmin rootAdmin = new RootAdmin(
+                "rootAdmin",
+                "rootAdmin",
+                "rootAdmin",
                 LocalDate.now(),
                 "Administrador do sistema",
-                "CBPOO");
-        congresso.addParticipante(admin);
+                "CBPOO"
+        );
+        congresso.addParticipante(rootAdmin);
 
-        int opcao;
-        do {
-            Main.imprimirMenu();
-            try {
-                opcao = scanner.nextInt();
-                switch (opcao) {
-                    case 0 -> {
-                        usuarioLogado = null;
-                        System.out.println("Log-out realizado com sucesso!");
-                    }
-                    case 1 -> Main.imprimirMenuLogin();
-                    case 2, 10 -> {
-                        //FIXME
-                        Main.imprimirMenuCadastro();
-                    }
-                    case 3 -> {
-                        //TODO: Submissão de artigo
-                        imprimirMenuCadastroArtigo();
-                    }
-                    case 4 -> {
-                        List<Artigo> artigosAceitos = congresso.getArtigosNegadosEmOrdemAlfabetica();
-                        if (artigosAceitos.isEmpty()) {
-                            System.out.println("============================================================");
-                            System.out.println("Não há artigos aceitos para serem listados!");
-                        } else {
-                            for (Artigo artigo : artigosAceitos) {
-                                System.out.println(artigo);
-                            }
-                        }
-                    }
-                    case 5 -> {
-                        List<Artigo> artigosNegados = congresso.getArtigosNegadosEmOrdemAlfabetica();
-                        if (artigosNegados.isEmpty()) {
-                            System.out.println("============================================================");
-                            System.out.println("Não há artigos negados para serem listados!");
-                        } else {
-                            for (Artigo artigo : artigosNegados) {
-                                System.out.println(artigo);
-                            }
-                        }
-                    }
-                    case 6 -> {
-                        System.out.print("Digite o ID do artigo que procura: ");
-                        int id = scanner.nextInt();
-                        try {
-                            Artigo artigoEncontrado = congresso.buscarArtigoPorId(id);
-                            System.out.println(artigoEncontrado);
-                        } catch (ArtigoNaoEncontradoException exception) {
-                            System.err.println(exception.getMessage());
-                        }
-                    }
-                    case 7 -> {
-                        System.out.println("================== Lista de participantes ==================");
-                        congresso.listarParticipantesEmOrdemAlfabetica();
-                    }
-                    case 8 -> {
-                        //TODO: validar inscrição
-                        try {
-                            System.out.print("CPF da(o) participante que deseja validar inscrição: ");
-                            String cpf = scanner.next().trim();
-                            Participante participante = congresso.buscarParticipantePorCpf(cpf);
-                            System.out.print("Deseja S ou N: ");
-                            String validadeInscricao = scanner.next().trim().toUpperCase();
-
-                            if (usuarioLogado instanceof GeneralChair) {
-                                if (validadeInscricao.startsWith("S")) {
-                                    ((GeneralChair) usuarioLogado).validarInscricaoParticipante(participante);
-                                    System.out.println("Inscrição validada com sucesso!");
-                                } else {
-                                    ((GeneralChair) usuarioLogado).invalidarInscricaoParticipante(participante);
-                                    System.out.println("Inscrição invalidada com sucesso!");
-                                }
-                            }
-
-                        } catch (ParticipanteNaoEncontradoException e) {
-                            System.out.println(e.getMessage());
-                        }
-                    }
-                    //TODO: Cadastrar organizador
-                    case 99 -> {
-                        System.out.println("Programa encerrado!");
-                        System.exit(0);
-                    }
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                break;
-            }
-
-        } while (true);
-
+        executarMenuPrincipal();
     }
 
 }
