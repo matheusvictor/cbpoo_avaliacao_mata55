@@ -46,16 +46,9 @@ public class Participante extends Pessoa {
         return this.getCpf().equals(cpf) && this.senha.equals(senha);
     }
 
-    @Override
-    public String toString() {
-        String descricaoValidadeInscricao = "Não";
-        String descricaoPendenciaInscricao = "Não";
-        if (inscricaoValida) {
-            descricaoValidadeInscricao = "Sim";
-        }
-        if (isValidacaoPendente()) {
-            descricaoPendenciaInscricao = "Sim";
-        }
+    public String obterDetalhes() {
+        String descricaoValidadeInscricao = inscricaoValida ? "Sim" : "Não";
+        String descricaoPendenciaInscricao = isValidacaoPendente() ? "Sim" : "Não";
         return "Nome: " + nome + "\n" +
                 "CPF: " + cpf + "\n" +
                 "Data de nascimento: " + dataNascimento + "\n" +
@@ -64,6 +57,11 @@ public class Participante extends Pessoa {
                 "Inscrição válida: " + descricaoValidadeInscricao + "\n" +
                 "Validação pendente: " + descricaoPendenciaInscricao;
 
+    }
+
+    @Override
+    public String toString() {
+        return nome + " - " + titulacaoAcademica + " - " + instituicaoDeVinculo;
     }
 
 }
