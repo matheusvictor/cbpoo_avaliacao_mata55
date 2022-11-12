@@ -113,16 +113,14 @@ public class Artigo implements Comparable<Artigo> {
 
     @Override
     public String toString() {
-        return "Artigo{" +
-                "identificador=" + identificador +
-                ", titulo='" + titulo + '\'' +
-                ", resumo='" + resumo + '\'' +
-                ", autores=" + autores +
-                ", revisores=" + revisores +
-                ", palavrasChave=" + palavrasChave +
-                ", quantidadeDePaginas=" + quantidadeDePaginas +
-                ", dataSubmissao=" + dataSubmissao +
-                '}';
+        return "ID: " + identificador + "\n" +
+                "Título: " + titulo + "\n" +
+                "Resumo: " + resumo + "\n" +
+                "Qtd. de páginas: " + quantidadeDePaginas + "\n" +
+                "Palavras-chave: " + palavrasChave +
+                "Autores: " + autores +
+                "Revisores: " + revisores +
+                "Data de submissão: " + dataSubmissao;
     }
 
     @Override

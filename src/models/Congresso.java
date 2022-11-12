@@ -1,13 +1,11 @@
 package models;
 
-import exceptions.ParticipanteNaoEncontradoException;
+import exceptions.*;
+import models.organizadores.RootAdmin;
 
-import java.time.LocalDate;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-
-import static services.ConversorData.converterDataParaLocalDate;
 
 public class Congresso {
 
@@ -27,27 +25,7 @@ public class Congresso {
         this.artigos = new ArrayList<>();
     }
 
-    public void imprimirMenu() {
-        System.out.println("============================================================");
-        System.out.println("1. Fazer login");
-        System.out.println("2. Inscrever participante");
-        System.out.println("3. Validar inscrição (exclusivo para general chair)");
-        System.out.println("4. Invalidar inscrição (exclusivo para general chair)");
-        System.out.println("5. Emitir certificado (exclusivo para general chair)");
-        System.out.println("6. Submeter artigo");
-        System.out.println("7. Enviar avaliação de artigo (exclusivo para revisores)");
-        System.out.println("8. Ver avaliações de um artigo");
-        System.out.println("9. Aceitar artigo (exclusivo para program chair)");
-        System.out.println("10. Rejeitar artigo (exclusivo para program chair)");
-        System.out.println("11. Listar artigos aceitos em ordem alfabética");
-        System.out.println("12. Listar artigos negados em ordem alfabética");
-        System.out.println("13. Ver dados de um artigo");
-        System.out.println("14. Listar participantes em ordem alfabética");
-        System.out.println("15. Encerrar o programa");
-        System.out.println("============================================================");
-    }
-
-    public Participante fazerLogin(String cpf, String senha) throws ParticipanteNaoEncontradoException {
+    public Participante fazerLogin(String cpf, String senha) throws Exception {
         Participante participante = this.participantes.stream()
                 .filter(p -> p.validarLogin(cpf, senha))
                 .findFirst()
@@ -57,47 +35,80 @@ public class Congresso {
             throw new ParticipanteNaoEncontradoException();
         }
 
+        if (participante.isValidacaoPendente()) {
+            throw new InscricaoPendenteException();
+        }
+
+        if (!participante.isInscricaoValida()) {
+            throw new InscricaoRecusadaException();
+        }
+
         return participante;
+    }
+
+    public void fazerLogout(Pessoa participante) {
+        if (participante != null) participante = null;
     }
 
     public void addParticipante(Participante participante) {
         this.participantes.add(participante);
     }
 
-    private boolean participanteEstaInscrito(String cpf) {
+    public void cpfJaCadastrado(String cpf) throws CpfJaCadastradoException {
         if (!this.participantes.isEmpty()) {
             for (Participante p : this.participantes) {
                 if (p.getCpf().equals(cpf)) {
-                    return true;
+                    throw new CpfJaCadastradoException();
                 }
             }
         }
-        return false;
     }
 
     public Artigo receberSubmissaoArtigo(Artigo artigo) {
         return null;
     }
 
+    public Participante buscarParticipantePorCpf(String cpf) throws ParticipanteNaoEncontradoException {
+        Participante participante = this.participantes.stream()
+                .filter(p -> p.getCpf().equals(cpf)).findFirst().orElse(null);
+
+        if (participante == null) {
+            throw new ParticipanteNaoEncontradoException();
+        }
+
+        return participante;
+    }
+
     public void listarParticipantesEmOrdemAlfabetica() {
+
         ordenarParticipantesEmOrdemAlfabetica(this.participantes);
+        int indice = 1;
         for (Participante p : this.participantes) {
-            System.out.println(p);
+            if (p instanceof RootAdmin) {
+                continue;
+            }
+            System.out.println(indice + ". " + p);
         }
     }
 
-    public List<Artigo> listarArtigosNegadosEmOrdemAlfabetica() {
-        List<Artigo> artigosNegados = this.artigos.stream().filter(artigo -> !artigo.aprovado).toList();
-        return this.ordenarArtigosEmOrdemAlfabetica(artigosNegados);
+    public List<Artigo> getArtigosNegadosEmOrdemAlfabetica() {
+        this.ordenarArtigosEmOrdemAlfabetica(this.artigos);
+        return this.artigos.stream().filter(artigo -> artigo.aprovado).toList();
     }
 
-    public List<Artigo> listarArtigosAceitosEmOrdemAlfabetica() {
-        List<Artigo> artigosAceitos = this.artigos.stream().filter(artigo -> artigo.aprovado).toList();
-        return this.ordenarArtigosEmOrdemAlfabetica(artigosAceitos);
+    public List<Artigo> getArtigosAceitosEmOrdemAlfabetica() {
+        this.ordenarArtigosEmOrdemAlfabetica(this.artigos);
+        return this.artigos.stream().filter(artigo -> artigo.aprovado).toList();
     }
 
-    public Artigo buscarArtigo(int id) {
-        return this.artigos.stream().filter(a -> a.getIdentificador() == id).findFirst().orElse(null);
+    public Artigo buscarArtigoPorId(int id) throws ArtigoNaoEncontradoException {
+        Artigo artigo = this.artigos.stream().filter(a -> a.getIdentificador() == id).findFirst().orElse(null);
+
+        if (artigo == null) {
+            throw new ArtigoNaoEncontradoException();
+        }
+
+        return artigo;
     }
 
     public void verDadosDeArtigo(int id) {
@@ -119,4 +130,11 @@ public class Congresso {
         return participantes;
     }
 
+    public ArrayList<Participante> getParticipantes() {
+        return participantes;
+    }
+
+    public ArrayList<Artigo> getArtigos() {
+        return artigos;
+    }
 }

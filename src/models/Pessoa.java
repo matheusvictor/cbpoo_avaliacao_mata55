@@ -6,7 +6,6 @@ public abstract class Pessoa implements Comparable<Pessoa> {
 
     protected String cpf;
     protected String nome;
-    protected boolean ehParticipante;
     protected LocalDate dataNascimento;
     protected String titulacaoAcademica;
     protected String instituicaoDeVinculo;
@@ -15,7 +14,6 @@ public abstract class Pessoa implements Comparable<Pessoa> {
                   String titulacaoAcademica, String instituicaoDeVinculo) {
         this.cpf = cpf;
         this.nome = nome;
-        this.ehParticipante = false;
         this.dataNascimento = dataNascimento;
         this.titulacaoAcademica = titulacaoAcademica;
         this.instituicaoDeVinculo = instituicaoDeVinculo;
@@ -27,14 +25,6 @@ public abstract class Pessoa implements Comparable<Pessoa> {
 
     public String getNome() {
         return nome;
-    }
-
-    public void setEhParticipante(boolean ehParticipante) {
-        this.ehParticipante = ehParticipante;
-    }
-
-    public boolean isEhParticipante() {
-        return ehParticipante;
     }
 
     public LocalDate getDataNascimento() {
