@@ -160,18 +160,28 @@ public class Main {
                             System.out.print("CPF da(o) participante que deseja validar inscrição: ");
                             String cpf = scanner.next().trim();
                             Participante participante = congresso.buscarParticipantePorCpf(cpf);
-                            System.out.print("Deseja S ou N: ");
-                            String validadeInscricao = scanner.next().trim().toUpperCase();
 
-                            if (usuarioLogado instanceof GeneralChair) {
+                            String validadeInscricao;
+
+                            do {
+                                System.out.print("Digite S para validar ou N para invalidar a inscrição: ");
+                                validadeInscricao = scanner.next().trim().toUpperCase();
+
                                 if (validadeInscricao.startsWith("S")) {
                                     ((GeneralChair) usuarioLogado).validarInscricaoParticipante(participante);
-                                    System.out.println("Inscrição validada com sucesso!");
-                                } else {
+                                    System.out.println("============================================================");
+                                    System.out.println("A inscrição de " + participante.getNome() + " foi validada com sucesso!");
+                                    break;
+                                } else if (validadeInscricao.startsWith("N")) {
                                     ((GeneralChair) usuarioLogado).invalidarInscricaoParticipante(participante);
-                                    System.out.println("Inscrição invalidada com sucesso!");
+                                    System.out.println("============================================================");
+                                    System.out.println("A inscrição de " + participante.getNome() + " foi invalidada com sucesso!");
+                                    break;
+                                } else {
+                                    System.out.print("Opção inválida! ");
                                 }
-                            }
+                            } while (true);
+
 
                         } catch (ParticipanteNaoEncontradoException e) {
                             System.out.println(e.getMessage());
