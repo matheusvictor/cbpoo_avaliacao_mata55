@@ -47,14 +47,6 @@ public class Main {
 
     }
 
-    public static void imprimirOpcoesGerais() {
-        System.out.println("3. Submeter artigo");
-        System.out.println("4. Listar artigos aceitos em ordem alfabética");
-        System.out.println("5. Listar artigos negados em ordem alfabética");
-        System.out.println("6. Ver dados de um artigo");
-        System.out.println("7. Listar participantes em ordem alfabética");
-    }
-
     public static void imprimirMenuGeneralChair() {
         System.out.println("8. Validar inscrição");
         System.out.println("9. Emitir certificado");
@@ -77,7 +69,10 @@ public class Main {
                 } else {
                     System.out.println("1. Fazer log-out");
                 }
-                System.out.println("2. Realizar inscrição");
+
+                if (usuarioLogado == null || usuarioLogado instanceof GeneralChair) {
+                    System.out.println("2. Realizar inscrição");
+                }
                 System.out.println("3. Submeter artigo");
                 System.out.println("4. Listar artigos aceitos em ordem alfabética");
                 System.out.println("5. Listar artigos negados em ordem alfabética");
@@ -340,9 +335,9 @@ public class Main {
 
     public static void main(String[] args) {
         RootAdmin rootAdmin = new RootAdmin(
+                "admin",
                 "rootAdmin",
-                "rootAdmin",
-                "rootAdmin",
+                "admin",
                 LocalDate.now(),
                 "Administrador do sistema",
                 "CBPOO"
