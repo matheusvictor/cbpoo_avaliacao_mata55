@@ -5,9 +5,9 @@ import models.Participante;
 import models.Pessoa;
 import models.especialistas.Autor;
 import models.especialistas.Revisor;
-import models.organizadores.RootAdmin;
 import models.organizadores.GeneralChair;
 import models.organizadores.ProgramChair;
+import models.organizadores.RootAdmin;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -171,8 +171,10 @@ public class Main {
         if (artigos.isEmpty()) {
             System.out.println("Não há artigos para serem listados!");
         } else {
+            int indice = 1;
             for (Artigo artigo : artigos) {
                 System.out.println(artigo);
+                System.out.println(indice + ". " + artigo);
             }
         }
         System.out.println("============================================================");

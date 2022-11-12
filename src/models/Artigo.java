@@ -111,8 +111,7 @@ public class Artigo implements Comparable<Artigo> {
         return dataSubmissao;
     }
 
-    @Override
-    public String toString() {
+    public String obterDetalhes() {
         return "ID: " + identificador + "\n" +
                 "Título: " + titulo + "\n" +
                 "Resumo: " + resumo + "\n" +
@@ -121,6 +120,11 @@ public class Artigo implements Comparable<Artigo> {
                 "Autores: " + autores +
                 "Revisores: " + revisores +
                 "Data de submissão: " + dataSubmissao;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + identificador + "]" + " - " + titulo + " - " + dataSubmissao;
     }
 
     @Override
