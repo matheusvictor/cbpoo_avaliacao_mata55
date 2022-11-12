@@ -120,26 +120,10 @@ public class Main {
                         imprimirMenuCadastroArtigo();
                     }
                     case 4 -> {
-                        List<Artigo> artigosAceitos = congresso.getArtigosNegadosEmOrdemAlfabetica();
-                        if (artigosAceitos.isEmpty()) {
-                            System.out.println("============================================================");
-                            System.out.println("Não há artigos aceitos para serem listados!");
-                        } else {
-                            for (Artigo artigo : artigosAceitos) {
-                                System.out.println(artigo);
-                            }
-                        }
+                        Main.executarMenuListarArtigos(true);
                     }
                     case 5 -> {
-                        List<Artigo> artigosNegados = congresso.getArtigosNegadosEmOrdemAlfabetica();
-                        if (artigosNegados.isEmpty()) {
-                            System.out.println("============================================================");
-                            System.out.println("Não há artigos negados para serem listados!");
-                        } else {
-                            for (Artigo artigo : artigosNegados) {
-                                System.out.println(artigo);
-                            }
-                        }
+                        Main.executarMenuListarArtigos(false);
                     }
                     case 6 -> {
                         System.out.print("Digite o ID do artigo que procura: ");
@@ -172,6 +156,26 @@ public class Main {
             }
 
         } while (true);
+    }
+
+    private static void executarMenuListarArtigos(boolean isAceito) {
+        List<Artigo> artigos;
+
+        if (isAceito) {
+            artigos = congresso.getArtigosAceitosEmOrdemAlfabetica();
+        } else {
+            artigos = congresso.getArtigosNegadosEmOrdemAlfabetica();
+        }
+
+        System.out.println("============================================================");
+        if (artigos.isEmpty()) {
+            System.out.println("Não há artigos para serem listados!");
+        } else {
+            for (Artigo artigo : artigos) {
+                System.out.println(artigo);
+            }
+        }
+        System.out.println("============================================================");
     }
 
     public static void executarMenuLogin() {
