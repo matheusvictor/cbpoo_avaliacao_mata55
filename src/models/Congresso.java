@@ -54,6 +54,10 @@ public class Congresso {
         this.participantes.add(participante);
     }
 
+    public void addArtigo(Artigo artigo) {
+        this.artigos.add(artigo);
+    }
+
     public void cpfJaCadastrado(String cpf) throws CpfJaCadastradoException {
         if (!this.participantes.isEmpty()) {
             for (Participante p : this.participantes) {
@@ -88,6 +92,7 @@ public class Congresso {
                 continue;
             }
             System.out.println(indice + ". " + p);
+            indice++;
         }
     }
 

@@ -126,14 +126,7 @@ public class Main {
                         Main.executarMenuListarArtigos(false);
                     }
                     case 6 -> {
-                        System.out.print("Digite o ID do artigo que procura: ");
-                        int id = scanner.nextInt();
-                        try {
-                            Artigo artigoEncontrado = congresso.buscarArtigoPorId(id);
-                            System.out.println(artigoEncontrado);
-                        } catch (ArtigoNaoEncontradoException exception) {
-                            System.err.println(exception.getMessage());
-                        }
+                        Main.executarMenuListarArtigoPorId();
                     }
                     case 7 -> {
                         Main.executarMenuListarParticipantes();
@@ -158,6 +151,20 @@ public class Main {
         } while (true);
     }
 
+    private static void executarMenuListarArtigoPorId() {
+        System.out.print("Digite o ID do artigo que procura: ");
+        int id = scanner.nextInt();
+
+        System.out.println("============================================================");
+        try {
+            Artigo artigoEncontrado = congresso.buscarArtigoPorId(id);
+            System.out.println(artigoEncontrado);
+        } catch (ArtigoNaoEncontradoException exception) {
+            System.err.println(exception.getMessage());
+        }
+        System.out.println("============================================================");
+    }
+
     private static void executarMenuListarArtigos(boolean isAceito) {
         List<Artigo> artigos;
 
@@ -173,8 +180,8 @@ public class Main {
         } else {
             int indice = 1;
             for (Artigo artigo : artigos) {
-                System.out.println(artigo);
                 System.out.println(indice + ". " + artigo);
+                indice++;
             }
         }
         System.out.println("============================================================");
@@ -388,6 +395,14 @@ public class Main {
                 "CBPOO"
         );
         congresso.addParticipante(rootAdmin);
+
+        Artigo artigo = new Artigo(
+                "Lorem Ipsum",
+                "Resumo",
+                new ArrayList<>(),
+                12
+        );
+        congresso.addArtigo(artigo);
 
         executarMenuPrincipal();
     }
