@@ -49,14 +49,15 @@ public class Participante extends Pessoa {
     public String obterDetalhes() {
         String descricaoValidadeInscricao = inscricaoValida ? "Sim" : "Não";
         String descricaoPendenciaInscricao = isValidacaoPendente() ? "Sim" : "Não";
+        String certificadoEmitido = certificado ? "Sim" : "Não";
         return "Nome: " + nome + "\n" +
                 "CPF: " + cpf + "\n" +
                 "Data de nascimento: " + dataNascimento + "\n" +
                 "Titulação acadêmica: " + titulacaoAcademica + "\n" +
                 "Instituição de vínculo: " + instituicaoDeVinculo + "\n" +
                 "Inscrição válida: " + descricaoValidadeInscricao + "\n" +
-                "Validação pendente: " + descricaoPendenciaInscricao;
-
+                "Validação pendente: " + descricaoPendenciaInscricao + "\n" +
+                "Certificado: " + certificadoEmitido;
     }
 
     @Override

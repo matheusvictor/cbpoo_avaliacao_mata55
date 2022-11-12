@@ -155,37 +155,10 @@ public class Main {
                         Main.executarMenuListarParticipantes();
                     }
                     case 8 -> {
-                        //TODO: validar inscrição
-                        try {
-                            System.out.print("CPF da(o) participante que deseja validar inscrição: ");
-                            String cpf = scanner.next().trim();
-                            Participante participante = congresso.buscarParticipantePorCpf(cpf);
-
-                            String validadeInscricao;
-
-                            do {
-                                System.out.print("Digite S para validar ou N para invalidar a inscrição: ");
-                                validadeInscricao = scanner.next().trim().toUpperCase();
-
-                                if (validadeInscricao.startsWith("S")) {
-                                    ((GeneralChair) usuarioLogado).validarInscricaoParticipante(participante);
-                                    System.out.println("============================================================");
-                                    System.out.println("A inscrição de " + participante.getNome() + " foi validada com sucesso!");
-                                    break;
-                                } else if (validadeInscricao.startsWith("N")) {
-                                    ((GeneralChair) usuarioLogado).invalidarInscricaoParticipante(participante);
-                                    System.out.println("============================================================");
-                                    System.out.println("A inscrição de " + participante.getNome() + " foi invalidada com sucesso!");
-                                    break;
-                                } else {
-                                    System.out.print("Opção inválida! ");
-                                }
-                            } while (true);
-
-
-                        } catch (ParticipanteNaoEncontradoException e) {
-                            System.out.println(e.getMessage());
-                        }
+                        Main.executarMenuValidacaoParticipante();
+                    }
+                    case 9 -> {
+                        Main.executarMenuCertificacaoParticipante();
                     }
                     //TODO: Cadastrar organizador
                     case 99 -> {
@@ -341,6 +314,62 @@ public class Main {
         }
 
 
+    }
+
+    private static void executarMenuValidacaoParticipante() {
+        try {
+            System.out.print("CPF da(o) participante que deseja validar inscrição: ");
+            String cpf = scanner.next().trim();
+            Participante participante = congresso.buscarParticipantePorCpf(cpf);
+
+            String validadeInscricao;
+
+            do {
+                System.out.print("Digite S para validar ou N para invalidar a inscrição: ");
+                validadeInscricao = scanner.next().trim().toUpperCase();
+
+                if (validadeInscricao.startsWith("S")) {
+                    ((GeneralChair) usuarioLogado).validarInscricaoParticipante(participante);
+                    System.out.println("============================================================");
+                    System.out.println("A inscrição de " + participante.getNome() + " foi validada com sucesso!");
+                    break;
+                } else if (validadeInscricao.startsWith("N")) {
+                    ((GeneralChair) usuarioLogado).invalidarInscricaoParticipante(participante);
+                    System.out.println("============================================================");
+                    System.out.println("A inscrição de " + participante.getNome() + " foi invalidada com sucesso!");
+                    break;
+                } else {
+                    System.out.print("Opção inválida! ");
+                }
+            } while (true);
+
+
+        } catch (ParticipanteNaoEncontradoException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void executarMenuCertificacaoParticipante() {
+        try {
+            System.out.print("CPF da(o) participante que deseja emitir o certificado: ");
+            String cpf = scanner.next().trim();
+            Participante participante = congresso.buscarParticipantePorCpf(cpf);
+
+            if (participante.isInscricaoValida()) {
+                ((GeneralChair) usuarioLogado).emitirCertificadoParaParticipante(participante);
+                System.out.println("============================================================");
+                System.out.println("Certificado de " + participante.getNome() + " emitido com sucesso!");
+                System.out.println("============================================================");
+                System.out.println(participante.obterDetalhes());
+            } else if (!participante.isValidacaoPendente() && !participante.isInscricaoValida()) {
+                System.out.println("Certificado não pôde ser emitido, pois o participante teve a inscrição recusada!");
+            } else {
+                System.out.println("Participante não possui uma inscrição válida!");
+            }
+
+        } catch (ParticipanteNaoEncontradoException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static void main(String[] args) {
