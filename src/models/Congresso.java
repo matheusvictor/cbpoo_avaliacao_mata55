@@ -1,6 +1,7 @@
 package models;
 
 import exceptions.*;
+import models.especialistas.Autor;
 import models.organizadores.RootAdmin;
 
 import java.util.List;
@@ -68,8 +69,14 @@ public class Congresso {
         }
     }
 
-    public Artigo receberSubmissaoArtigo(Artigo artigo) {
-        return null;
+    public boolean receberSubmissaoArtigo(Artigo artigo) throws Exception {
+        if (artigo.getAutores().isEmpty()) {
+            throw new Exception("O artigo precisa de pelo menos um(a) autor(a)!");
+        }
+        for (Autor autor : artigo.getAutores()) {
+
+        }
+        return true;
     }
 
     public Participante buscarParticipantePorCpf(String cpf) throws ParticipanteNaoEncontradoException {

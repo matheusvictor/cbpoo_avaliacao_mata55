@@ -11,6 +11,7 @@ import java.util.List;
 public class Artigo implements Comparable<Artigo> {
 
     private static int contador = 1;
+    public final static int MAX_AUTORES = 5;
 
     protected int identificador;
     protected String titulo;
@@ -55,8 +56,13 @@ public class Artigo implements Comparable<Artigo> {
         return resumo;
     }
 
-    public void vincularAutor(Autor autor) {
-        this.autores.add(autor);
+    public boolean addAutor(Autor autor) throws Exception {
+        if (this.autores.size() >= MAX_AUTORES) {
+            throw new Exception("Um artigo não pode conter mais de " + MAX_AUTORES + " autores!");
+        } else {
+            this.autores.add(autor);
+            return true;
+        }
     }
 
     public HashSet<Autor> getAutores() {
