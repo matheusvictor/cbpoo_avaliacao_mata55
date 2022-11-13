@@ -5,9 +5,9 @@ import models.Participante;
 import models.Pessoa;
 import models.especialistas.Autor;
 import models.especialistas.Revisor;
-import models.organizadores.RootAdmin;
 import models.organizadores.GeneralChair;
 import models.organizadores.ProgramChair;
+import models.organizadores.RootAdmin;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -120,36 +120,13 @@ public class Main {
                         imprimirMenuCadastroArtigo();
                     }
                     case 4 -> {
-                        List<Artigo> artigosAceitos = congresso.getArtigosNegadosEmOrdemAlfabetica();
-                        if (artigosAceitos.isEmpty()) {
-                            System.out.println("============================================================");
-                            System.out.println("Não há artigos aceitos para serem listados!");
-                        } else {
-                            for (Artigo artigo : artigosAceitos) {
-                                System.out.println(artigo);
-                            }
-                        }
+                        Main.executarMenuListarArtigos(true);
                     }
                     case 5 -> {
-                        List<Artigo> artigosNegados = congresso.getArtigosNegadosEmOrdemAlfabetica();
-                        if (artigosNegados.isEmpty()) {
-                            System.out.println("============================================================");
-                            System.out.println("Não há artigos negados para serem listados!");
-                        } else {
-                            for (Artigo artigo : artigosNegados) {
-                                System.out.println(artigo);
-                            }
-                        }
+                        Main.executarMenuListarArtigos(false);
                     }
                     case 6 -> {
-                        System.out.print("Digite o ID do artigo que procura: ");
-                        int id = scanner.nextInt();
-                        try {
-                            Artigo artigoEncontrado = congresso.buscarArtigoPorId(id);
-                            System.out.println(artigoEncontrado);
-                        } catch (ArtigoNaoEncontradoException exception) {
-                            System.err.println(exception.getMessage());
-                        }
+                        Main.executarMenuListarArtigoPorId();
                     }
                     case 7 -> {
                         Main.executarMenuListarParticipantes();
@@ -172,6 +149,42 @@ public class Main {
             }
 
         } while (true);
+    }
+
+    private static void executarMenuListarArtigoPorId() {
+        System.out.print("Digite o ID do artigo que procura: ");
+        int id = scanner.nextInt();
+
+        System.out.println("============================================================");
+        try {
+            Artigo artigoEncontrado = congresso.buscarArtigoPorId(id);
+            System.out.println(artigoEncontrado);
+        } catch (ArtigoNaoEncontradoException exception) {
+            System.err.println(exception.getMessage());
+        }
+        System.out.println("============================================================");
+    }
+
+    private static void executarMenuListarArtigos(boolean isAceito) {
+        List<Artigo> artigos;
+
+        if (isAceito) {
+            artigos = congresso.getArtigosAceitosEmOrdemAlfabetica();
+        } else {
+            artigos = congresso.getArtigosNegadosEmOrdemAlfabetica();
+        }
+
+        System.out.println("============================================================");
+        if (artigos.isEmpty()) {
+            System.out.println("Não há artigos para serem listados!");
+        } else {
+            int indice = 1;
+            for (Artigo artigo : artigos) {
+                System.out.println(indice + ". " + artigo);
+                indice++;
+            }
+        }
+        System.out.println("============================================================");
     }
 
     public static void executarMenuLogin() {
@@ -382,6 +395,14 @@ public class Main {
                 "CBPOO"
         );
         congresso.addParticipante(rootAdmin);
+
+        Artigo artigo = new Artigo(
+                "Lorem Ipsum",
+                "Resumo",
+                new ArrayList<>(),
+                12
+        );
+        congresso.addArtigo(artigo);
 
         executarMenuPrincipal();
     }
