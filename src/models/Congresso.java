@@ -27,28 +27,15 @@ public class Congresso {
     }
 
     public Participante fazerLogin(String cpf, String senha) throws Exception {
-        Participante participante = this.participantes.stream()
-                .filter(p -> p.validarLogin(cpf, senha))
-                .findFirst()
-                .orElse(null);
+        Participante participante = buscarParticipanteValidoPorCpf(cpf);
 
-        if (participante == null) {
-            throw new ParticipanteNaoEncontradoException();
-        }
+        boolean senhaValida = participante.verificarSenha(senha);
 
-        if (participante.isValidacaoPendente()) {
-            throw new InscricaoPendenteException();
-        }
-
-        if (!participante.isInscricaoValida()) {
-            throw new InscricaoRecusadaException();
+        if (!senhaValida) {
+            throw new SenhaInvalidaException();
         }
 
         return participante;
-    }
-
-    public void fazerLogout(Pessoa participante) {
-        if (participante != null) participante = null;
     }
 
     public void addParticipante(Participante participante) {
@@ -87,6 +74,20 @@ public class Congresso {
             throw new ParticipanteNaoEncontradoException();
         }
 
+        return participante;
+    }
+
+    public Participante buscarParticipanteValidoPorCpf(String cpf) throws ParticipanteNaoEncontradoException, InscricaoPendenteException, InscricaoRecusadaException {
+        Participante participante = buscarParticipantePorCpf(cpf);
+
+
+        if (participante.isValidacaoPendente()) {
+            throw new InscricaoPendenteException();
+        }
+
+        if (!participante.isInscricaoValida()) {
+            throw new InscricaoRecusadaException();
+        }
         return participante;
     }
 
