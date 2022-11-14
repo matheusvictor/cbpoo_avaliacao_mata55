@@ -60,9 +60,7 @@ public class Congresso {
         if (artigo.getAutores().isEmpty()) {
             throw new Exception("O artigo precisa de pelo menos um(a) autor(a)!");
         }
-        for (Autor autor : artigo.getAutores()) {
 
-        }
         return true;
     }
 
@@ -149,5 +147,10 @@ public class Congresso {
 
     public ArrayList<Artigo> getArtigos() {
         return artigos;
+    }
+
+    public void removerParticipante(Participante participante) throws ParticipanteNaoEncontradoException {
+        participante = this.buscarParticipantePorCpf(participante.getCpf());
+        this.participantes.remove(participante);
     }
 }
