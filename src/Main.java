@@ -10,10 +10,11 @@ import models.organizadores.ProgramChair;
 import models.organizadores.RootAdmin;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import static models.Artigo.MAX_AUTORES;
+import static models.Artigo.QTD_PALAVRAS_CHAVE;
 import static services.ConversorData.converterDataParaLocalDate;
 
 public class Main {
@@ -73,7 +74,9 @@ public class Main {
                 if (usuarioLogado == null || usuarioLogado instanceof GeneralChair) {
                     System.out.println("2. Realizar inscrição");
                 }
-                System.out.println("3. Submeter artigo");
+                if (!(usuarioLogado instanceof GeneralChair)) {
+                    System.out.println("3. Submeter artigo");
+                }
                 System.out.println("4. Listar artigos aceitos em ordem alfabética");
                 System.out.println("5. Listar artigos negados em ordem alfabética");
                 System.out.println("6. Ver dados de um artigo");
@@ -112,12 +115,15 @@ public class Main {
                             System.out.println("Log-out realizado com sucesso!");
                         }
                     }
-                    case 2, 10 -> {
+                    case 2 -> {
                         Main.imprimirMenuCadastro();
                     }
                     case 3 -> {
-                        //TODO: Submissão de artigo
-                        imprimirMenuCadastroArtigo();
+                        if (usuarioLogado instanceof RootAdmin) {
+                            System.out.println("Opção inválida!");
+                        } else {
+                            imprimirMenuCadastroArtigo();
+                        }
                     }
                     case 4 -> {
                         Main.executarMenuListarArtigos(true);
@@ -126,7 +132,7 @@ public class Main {
                         Main.executarMenuListarArtigos(false);
                     }
                     case 6 -> {
-                        Main.executarMenuListarArtigoPorId();
+                        Main.executarMenuDetalhesArtigoPorId();
                     }
                     case 7 -> {
                         Main.executarMenuListarParticipantes();
@@ -137,10 +143,12 @@ public class Main {
                     case 9 -> {
                         Main.executarMenuCertificacaoParticipante();
                     }
-                    //TODO: Cadastrar organizador
                     case 99 -> {
                         System.out.println("Programa encerrado!");
                         System.exit(0);
+                    }
+                    default -> {
+                        System.out.println("Opção inválida!");
                     }
                 }
             } catch (Exception e) {
@@ -151,14 +159,14 @@ public class Main {
         } while (true);
     }
 
-    private static void executarMenuListarArtigoPorId() {
+    private static void executarMenuDetalhesArtigoPorId() {
         System.out.print("Digite o ID do artigo que procura: ");
         int id = scanner.nextInt();
 
         System.out.println("============================================================");
         try {
             Artigo artigoEncontrado = congresso.buscarArtigoPorId(id);
-            System.out.println(artigoEncontrado);
+            System.out.println(artigoEncontrado.obterDetalhes());
         } catch (ArtigoNaoEncontradoException exception) {
             System.err.println(exception.getMessage());
         }
@@ -284,49 +292,108 @@ public class Main {
 
     public static void imprimirMenuCadastroArtigo() {
 
-        ArrayList<Participante> autores = new ArrayList<>();
-        Artigo artigo;
+        Artigo artigo = new Artigo();
         String cpf;
 
-        Participante autorPrincipal = null;
+        Participante autorPrincipal;
 
-        try {
-            System.out.print("Digite o CPF do autor principal: ");
-            cpf = scanner.next().trim();
-            autorPrincipal = congresso.buscarParticipantePorCpf(cpf);
+        if (usuarioLogado != null) {
+            autorPrincipal = (Participante) usuarioLogado;
+        } else {
+            try {
+                System.out.print("Digite o CPF do(a) autor(a) principal: ");
+                cpf = scanner.next();
+                autorPrincipal = congresso.buscarParticipanteValidoPorCpf(cpf);
 
-            System.out.println("==");
-            if (autorPrincipal.isInscricaoValida()) {
-                System.out.println("Vamos cadastrar o artigo");
-                autores.add(autorPrincipal);
-
-                System.out.println("Existem outros autores(as)?");
-
-                if (autores.size() < 2) {
-                    Participante coAutor = imprimirMenuCadastro();
-                    autores.add(coAutor);
-                } else {
-                    System.out.println("Acabou");
+                if (autorPrincipal instanceof RootAdmin) {
+                    throw new ParticipanteNaoEncontradoException();
                 }
 
-            } else if (autorPrincipal.isValidacaoPendente()) {
-                System.out.println(new InscricaoPendenteException().getMessage());
-
-            } else {
-                System.out.println(new InscricaoRecusadaException().getMessage());
+            } catch (ParticipanteNaoEncontradoException | InscricaoPendenteException | InscricaoRecusadaException e) {
+                System.out.println(e.getMessage());
+                return;
             }
-            System.out.println("==");
+        }
 
+        try {
+            artigo.addAutor(autorPrincipal);
+        } catch (NumeroMaximoAutoresException exception) {
+            System.out.println(exception.getMessage());
+        }
+
+        System.out.print("Digite o título do artigo: ");
+        artigo.setTitulo(scanner.next());
+
+        System.out.print("Digite o resumo do artigo: ");
+        artigo.setResumo(scanner.next());
+
+        int contadorPalavrasChave = 1;
+        do {
+            try {
+                System.out.print("Digite a " + contadorPalavrasChave + "ª palavra-chave: ");
+                artigo.addPalavraChave(scanner.next());
+            } catch (NumeroMaximoPalavrasChaveException exception) {
+                System.out.println(exception.getMessage());
+            }
+            contadorPalavrasChave++;
+        } while (contadorPalavrasChave <= QTD_PALAVRAS_CHAVE);
+
+        System.out.print("Digite a qtd. de páginas do artigo: ");
+        artigo.setQuantidadeDePaginas(scanner.nextInt()); //TODO: criar exceção para tipo de entrada
+
+        do {
+            System.out.print("Deseja cadastrar um(a) co-autor(a)? [S/N] ");
+            String opcao = scanner.next().trim().toUpperCase();
+
+            if (opcao.startsWith("N")) {
+                break;
+            } else {
+                System.out.print("CPF do(a) co-autor(a): ");
+                cpf = scanner.next();
+
+                System.out.print("Nome do(a) co-autor(a): ");
+                String nome = scanner.next();
+
+                LocalDate dataNascimentoFormatada;
+                while (true) {
+                    System.out.print("Data de Nascimento (dd/mm/aaaa) do(a) co-autor(a): ");
+                    String dataNascimentoCoAutor = scanner.next();
+                    try {
+                        dataNascimentoFormatada = converterDataParaLocalDate(dataNascimentoCoAutor);
+                        break;
+                    } catch (Exception exception) {
+                        System.out.println(exception.getMessage());
+                    }
+                }
+
+                System.out.print("Titulação acadêmica do(a) co-autor(a): ");
+                String titulacaoAcademica = scanner.next();
+
+                System.out.print("Instituição de vínculo do(a) co-autor(a): ");
+                String instituicaoDeVinculo = scanner.next();
+
+                Autor coAutor = new Autor(cpf, nome, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
+
+                try {
+                    artigo.addAutor(coAutor);
+                } catch (NumeroMaximoAutoresException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+
+        } while (artigo.getAutores().size() < MAX_AUTORES);
+
+        // Converte o Participante em um autor
+        try {
+            congresso.addArtigo(artigo);
+            congresso.removerParticipante(autorPrincipal);
+            autorPrincipal = Autor.converterParticipante(autorPrincipal);
+            ((Autor) autorPrincipal).addArtigoSubmetido(artigo);
+            congresso.addParticipante(autorPrincipal);
         } catch (ParticipanteNaoEncontradoException e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         }
-
-        if (autorPrincipal == null) {
-            System.out.println("Realizando cadastro..."); //TODO: A ideia é que pergunte se deseja cadastrar, etc.
-            autorPrincipal = imprimirMenuCadastro();
-        }
-
-
+        ((Autor) autorPrincipal).addArtigoSubmetido(artigo);
     }
 
     private static void executarMenuValidacaoParticipante() {
@@ -396,15 +463,6 @@ public class Main {
         );
         congresso.addParticipante(rootAdmin);
 
-        Artigo artigo = new Artigo(
-                "Lorem Ipsum",
-                "Resumo",
-                new ArrayList<>(),
-                12
-        );
-        congresso.addArtigo(artigo);
-
         executarMenuPrincipal();
     }
-
 }

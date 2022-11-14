@@ -1,6 +1,7 @@
 package models;
 
 import exceptions.*;
+import models.especialistas.Autor;
 import models.organizadores.RootAdmin;
 
 import java.util.List;
@@ -26,28 +27,15 @@ public class Congresso {
     }
 
     public Participante fazerLogin(String cpf, String senha) throws Exception {
-        Participante participante = this.participantes.stream()
-                .filter(p -> p.validarLogin(cpf, senha))
-                .findFirst()
-                .orElse(null);
+        Participante participante = buscarParticipanteValidoPorCpf(cpf);
 
-        if (participante == null) {
-            throw new ParticipanteNaoEncontradoException();
-        }
+        boolean senhaValida = participante.verificarSenha(senha);
 
-        if (participante.isValidacaoPendente()) {
-            throw new InscricaoPendenteException();
-        }
-
-        if (!participante.isInscricaoValida()) {
-            throw new InscricaoRecusadaException();
+        if (!senhaValida) {
+            throw new SenhaInvalidaException();
         }
 
         return participante;
-    }
-
-    public void fazerLogout(Pessoa participante) {
-        if (participante != null) participante = null;
     }
 
     public void addParticipante(Participante participante) {
@@ -68,8 +56,12 @@ public class Congresso {
         }
     }
 
-    public Artigo receberSubmissaoArtigo(Artigo artigo) {
-        return null;
+    public boolean receberSubmissaoArtigo(Artigo artigo) throws Exception {
+        if (artigo.getAutores().isEmpty()) {
+            throw new Exception("O artigo precisa de pelo menos um(a) autor(a)!");
+        }
+
+        return true;
     }
 
     public Participante buscarParticipantePorCpf(String cpf) throws ParticipanteNaoEncontradoException {
@@ -80,6 +72,20 @@ public class Congresso {
             throw new ParticipanteNaoEncontradoException();
         }
 
+        return participante;
+    }
+
+    public Participante buscarParticipanteValidoPorCpf(String cpf)
+            throws ParticipanteNaoEncontradoException, InscricaoPendenteException, InscricaoRecusadaException {
+        Participante participante = buscarParticipantePorCpf(cpf);
+
+        if (participante.isValidacaoPendente()) {
+            throw new InscricaoPendenteException();
+        }
+
+        if (!participante.isInscricaoValida()) {
+            throw new InscricaoRecusadaException();
+        }
         return participante;
     }
 
@@ -141,5 +147,10 @@ public class Congresso {
 
     public ArrayList<Artigo> getArtigos() {
         return artigos;
+    }
+
+    public void removerParticipante(Participante participante) throws ParticipanteNaoEncontradoException {
+        participante = this.buscarParticipantePorCpf(participante.getCpf());
+        this.participantes.remove(participante);
     }
 }

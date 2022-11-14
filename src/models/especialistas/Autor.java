@@ -1,32 +1,39 @@
 package models.especialistas;
 
 import models.Artigo;
+import models.Participante;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Autor extends Especialista {
 
-    private ArrayList<Artigo> artigosSubmetidos;
+    private ArrayList<Artigo> artigosSubmetidos = new ArrayList<>();
 
     public Autor(String cpf, String nome, LocalDate dataNascimento,
-                 String titulacaoAcademica, String instituicaoDeVinculo, String especialidade) {
-        super(cpf, nome, dataNascimento, titulacaoAcademica, instituicaoDeVinculo, especialidade);
-        this.artigosSubmetidos = new ArrayList<>();
+                 String titulacaoAcademica, String instituicaoDeVinculo) {
+        super(cpf, nome, dataNascimento, titulacaoAcademica, instituicaoDeVinculo);
     }
 
-    public Artigo submeterArtigo(String titulo, String resumo, List<String> palavrasChave, int quantidadeDePaginas) {
-        Artigo artigo = new Artigo(titulo, resumo, palavrasChave, quantidadeDePaginas);
-        this.artigosSubmetidos.add(artigo);
-        return artigo;
+    public static Autor converterParticipante(Participante participante) {
+        Autor autor = new Autor(
+                participante.getCpf(),
+                participante.getNome(),
+                participante.getDataNascimento(),
+                participante.getTitulacaoAcademica(),
+                participante.getInstituicaoDeVinculo()
+        );
+
+        autor.setSenha(participante.getSenha());
+        autor.setCertificado(participante.isCertificado());
+        autor.setInscricaoValida(participante.isInscricaoValida());
+        autor.setValidacaoPendente(participante.isValidacaoPendente());
+
+        return autor;
     }
 
-    public void vincularCoAutoresAoArtigo(Artigo artigo, String cpf, String nome, LocalDate dataNascimento,
-                                          String titulacaoAcademica, String instituicaoDeVinculo, String especialidade) {
-        Autor coAutor = new Autor(cpf, nome, dataNascimento, titulacaoAcademica, instituicaoDeVinculo, especialidade);
-        if (artigo.getAutores().size() < 5)
-            artigo.vincularAutor(coAutor);
+    public boolean addArtigoSubmetido(Artigo artigo) {
+        return this.artigosSubmetidos.add(artigo);
     }
 
 }

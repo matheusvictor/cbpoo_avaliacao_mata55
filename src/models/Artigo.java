@@ -1,6 +1,7 @@
 package models;
 
-import models.especialistas.Autor;
+import exceptions.NumeroMaximoAutoresException;
+import exceptions.NumeroMaximoPalavrasChaveException;
 import models.especialistas.Revisor;
 
 import java.time.LocalDate;
@@ -11,12 +12,14 @@ import java.util.List;
 public class Artigo implements Comparable<Artigo> {
 
     private static int contador = 1;
+    public final static int MAX_AUTORES = 5;
+    public final static int QTD_PALAVRAS_CHAVE = 3;
 
     protected int identificador;
     protected String titulo;
     protected String resumo;
     protected ArrayList<String> avaliacoesRevisores;
-    protected HashSet<Autor> autores;
+    protected HashSet<Pessoa> autores;
     protected HashSet<Revisor> revisores;
     protected List<String> palavrasChave;
     protected int quantidadeDePaginas;
@@ -24,18 +27,13 @@ public class Artigo implements Comparable<Artigo> {
     protected boolean aprovado;
     protected boolean aguardandoAvaliacao;
 
-    public Artigo(String titulo, String resumo, List<String> palavrasChave,
-                  int quantidadeDePaginas) {
-
+    public Artigo() {
         this.identificador = contador;
 
-        this.titulo = titulo;
-        this.resumo = resumo;
         this.autores = new HashSet<>();
         this.revisores = new HashSet<>();
-        this.palavrasChave = palavrasChave;
+        this.palavrasChave = new ArrayList<>();
         this.avaliacoesRevisores = new ArrayList<>();
-        this.quantidadeDePaginas = quantidadeDePaginas;
         this.aprovado = false;
         this.aguardandoAvaliacao = true;
         this.dataSubmissao = LocalDate.now();
@@ -43,23 +41,30 @@ public class Artigo implements Comparable<Artigo> {
         contador++;
     }
 
-    public int getIdentificador() {
-        return identificador;
+    public Artigo(String titulo, String resumo, int quantidadeDePaginas) {
+
+        this();
+
+        this.titulo = titulo;
+        this.resumo = resumo;
+        this.quantidadeDePaginas = quantidadeDePaginas;
     }
 
-    public String getTitulo() {
-        return titulo;
+    public boolean addAutor(Pessoa autor) throws NumeroMaximoAutoresException {
+        if (this.autores.size() >= MAX_AUTORES) {
+            throw new NumeroMaximoAutoresException();
+        }
+        return this.autores.add(autor);
     }
 
-    public String getResumo() {
-        return resumo;
+    public boolean addPalavraChave(String palavraChave) throws NumeroMaximoPalavrasChaveException {
+        if (this.autores.size() >= QTD_PALAVRAS_CHAVE) {
+            throw new NumeroMaximoPalavrasChaveException();
+        }
+        return this.palavrasChave.add(palavraChave);
     }
 
-    public void vincularAutor(Autor autor) {
-        this.autores.add(autor);
-    }
-
-    public HashSet<Autor> getAutores() {
+    public HashSet<Pessoa> getAutores() {
         return autores;
     }
 
@@ -111,14 +116,46 @@ public class Artigo implements Comparable<Artigo> {
         return dataSubmissao;
     }
 
+    public void setIdentificador(int identificador) {
+        this.identificador = identificador;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public void setResumo(String resumo) {
+        this.resumo = resumo;
+    }
+
+    public void setAutores(HashSet<Pessoa> autores) {
+        this.autores = autores;
+    }
+
+    public void setQuantidadeDePaginas(int quantidadeDePaginas) {
+        this.quantidadeDePaginas = quantidadeDePaginas;
+    }
+
+    public int getIdentificador() {
+        return identificador;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public String getResumo() {
+        return resumo;
+    }
+
     public String obterDetalhes() {
         return "ID: " + identificador + "\n" +
                 "Título: " + titulo + "\n" +
                 "Resumo: " + resumo + "\n" +
                 "Qtd. de páginas: " + quantidadeDePaginas + "\n" +
-                "Palavras-chave: " + palavrasChave +
-                "Autores: " + autores +
-                "Revisores: " + revisores +
+                "Palavras-chave: " + palavrasChave + "\n" +
+                "Autores: " + autores + "\n" +
+                "Revisores: " + revisores + "\n" +
                 "Data de submissão: " + dataSubmissao;
     }
 

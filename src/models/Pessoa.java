@@ -10,6 +10,10 @@ public abstract class Pessoa implements Comparable<Pessoa> {
     protected String titulacaoAcademica;
     protected String instituicaoDeVinculo;
 
+    public Pessoa(){
+
+    }
+
     public Pessoa(String cpf, String nome, LocalDate dataNascimento,
                   String titulacaoAcademica, String instituicaoDeVinculo) {
         this.cpf = cpf;

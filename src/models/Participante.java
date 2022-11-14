@@ -42,9 +42,18 @@ public class Participante extends Pessoa {
         this.validacaoPendente = validacaoPendente;
     }
 
-    public boolean validarLogin(String cpf, String senha) {
-        return this.getCpf().equals(cpf) && this.senha.equals(senha);
+    public boolean verificarSenha(String senha) {
+        return this.senha.equals(senha);
     }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
 
     public String obterDetalhes() {
         String descricaoValidadeInscricao = inscricaoValida ? "Sim" : "Não";
