@@ -2,7 +2,6 @@ package models;
 
 import exceptions.NumeroMaximoAutoresException;
 import exceptions.NumeroMaximoPalavrasChaveException;
-import models.especialistas.Autor;
 import models.especialistas.Revisor;
 
 import java.time.LocalDate;
@@ -20,7 +19,7 @@ public class Artigo implements Comparable<Artigo> {
     protected String titulo;
     protected String resumo;
     protected ArrayList<String> avaliacoesRevisores;
-    protected HashSet<Autor> autores;
+    protected HashSet<Pessoa> autores;
     protected HashSet<Revisor> revisores;
     protected List<String> palavrasChave;
     protected int quantidadeDePaginas;
@@ -38,20 +37,20 @@ public class Artigo implements Comparable<Artigo> {
         this.aprovado = false;
         this.aguardandoAvaliacao = true;
         this.dataSubmissao = LocalDate.now();
+
+        contador++;
     }
 
     public Artigo(String titulo, String resumo, int quantidadeDePaginas) {
 
         this();
-        this.identificador = contador;
 
         this.titulo = titulo;
         this.resumo = resumo;
         this.quantidadeDePaginas = quantidadeDePaginas;
-        contador++;
     }
 
-    public boolean addAutor(Autor autor) throws NumeroMaximoAutoresException {
+    public boolean addAutor(Pessoa autor) throws NumeroMaximoAutoresException {
         if (this.autores.size() >= MAX_AUTORES) {
             throw new NumeroMaximoAutoresException();
         }
@@ -65,7 +64,7 @@ public class Artigo implements Comparable<Artigo> {
         return this.palavrasChave.add(palavraChave);
     }
 
-    public HashSet<Autor> getAutores() {
+    public HashSet<Pessoa> getAutores() {
         return autores;
     }
 
@@ -129,7 +128,7 @@ public class Artigo implements Comparable<Artigo> {
         this.resumo = resumo;
     }
 
-    public void setAutores(HashSet<Autor> autores) {
+    public void setAutores(HashSet<Pessoa> autores) {
         this.autores = autores;
     }
 
@@ -154,9 +153,9 @@ public class Artigo implements Comparable<Artigo> {
                 "Título: " + titulo + "\n" +
                 "Resumo: " + resumo + "\n" +
                 "Qtd. de páginas: " + quantidadeDePaginas + "\n" +
-                "Palavras-chave: " + palavrasChave +
-                "Autores: " + autores +
-                "Revisores: " + revisores +
+                "Palavras-chave: " + palavrasChave + "\n" +
+                "Autores: " + autores + "\n" +
+                "Revisores: " + revisores + "\n" +
                 "Data de submissão: " + dataSubmissao;
     }
 
