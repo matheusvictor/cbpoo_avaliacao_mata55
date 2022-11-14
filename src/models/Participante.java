@@ -9,10 +9,6 @@ public class Participante extends Pessoa {
     protected boolean inscricaoValida;
     protected boolean validacaoPendente;
 
-    public Participante() {
-        super();
-    }
-
     public Participante(String cpf, String nome, String senha,
                         LocalDate dataNascimento, String titulacaoAcademica, String instituicaoDeVinculo) {
         super(cpf, nome, dataNascimento, titulacaoAcademica, instituicaoDeVinculo);
@@ -49,6 +45,15 @@ public class Participante extends Pessoa {
     public boolean verificarSenha(String senha) {
         return this.senha.equals(senha);
     }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
 
     public String obterDetalhes() {
         String descricaoValidadeInscricao = inscricaoValida ? "Sim" : "Não";
