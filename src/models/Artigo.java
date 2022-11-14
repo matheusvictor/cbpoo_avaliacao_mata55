@@ -1,5 +1,7 @@
 package models;
 
+import exceptions.NumeroMaximoAutoresException;
+import exceptions.NumeroMaximoPalavrasChaveException;
 import models.especialistas.Autor;
 import models.especialistas.Revisor;
 
@@ -12,6 +14,7 @@ public class Artigo implements Comparable<Artigo> {
 
     private static int contador = 1;
     public final static int MAX_AUTORES = 5;
+    public final static int QTD_PALAVRAS_CHAVE = 3;
 
     protected int identificador;
     protected String titulo;
@@ -25,44 +28,41 @@ public class Artigo implements Comparable<Artigo> {
     protected boolean aprovado;
     protected boolean aguardandoAvaliacao;
 
-    public Artigo(String titulo, String resumo, List<String> palavrasChave,
-                  int quantidadeDePaginas) {
+    public Artigo() {
+        this.identificador = contador;
 
+        this.autores = new HashSet<>();
+        this.revisores = new HashSet<>();
+        this.palavrasChave = new ArrayList<>();
+        this.avaliacoesRevisores = new ArrayList<>();
+        this.aprovado = false;
+        this.aguardandoAvaliacao = true;
+        this.dataSubmissao = LocalDate.now();
+    }
+
+    public Artigo(String titulo, String resumo, int quantidadeDePaginas) {
+
+        this();
         this.identificador = contador;
 
         this.titulo = titulo;
         this.resumo = resumo;
-        this.autores = new HashSet<>();
-        this.revisores = new HashSet<>();
-        this.palavrasChave = palavrasChave;
-        this.avaliacoesRevisores = new ArrayList<>();
         this.quantidadeDePaginas = quantidadeDePaginas;
-        this.aprovado = false;
-        this.aguardandoAvaliacao = true;
-        this.dataSubmissao = LocalDate.now();
-
         contador++;
     }
 
-    public int getIdentificador() {
-        return identificador;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public String getResumo() {
-        return resumo;
-    }
-
-    public boolean addAutor(Autor autor) throws Exception {
+    public boolean addAutor(Autor autor) throws NumeroMaximoAutoresException {
         if (this.autores.size() >= MAX_AUTORES) {
-            throw new Exception("Um artigo não pode conter mais de " + MAX_AUTORES + " autores!");
-        } else {
-            this.autores.add(autor);
-            return true;
+            throw new NumeroMaximoAutoresException();
         }
+        return this.autores.add(autor);
+    }
+
+    public boolean addPalavraChave(String palavraChave) throws NumeroMaximoPalavrasChaveException {
+        if (this.autores.size() >= QTD_PALAVRAS_CHAVE) {
+            throw new NumeroMaximoPalavrasChaveException();
+        }
+        return this.palavrasChave.add(palavraChave);
     }
 
     public HashSet<Autor> getAutores() {
@@ -115,6 +115,38 @@ public class Artigo implements Comparable<Artigo> {
 
     public LocalDate getDataSubmissao() {
         return dataSubmissao;
+    }
+
+    public void setIdentificador(int identificador) {
+        this.identificador = identificador;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public void setResumo(String resumo) {
+        this.resumo = resumo;
+    }
+
+    public void setAutores(HashSet<Autor> autores) {
+        this.autores = autores;
+    }
+
+    public void setQuantidadeDePaginas(int quantidadeDePaginas) {
+        this.quantidadeDePaginas = quantidadeDePaginas;
+    }
+
+    public int getIdentificador() {
+        return identificador;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public String getResumo() {
+        return resumo;
     }
 
     public String obterDetalhes() {

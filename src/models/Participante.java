@@ -9,6 +9,10 @@ public class Participante extends Pessoa {
     protected boolean inscricaoValida;
     protected boolean validacaoPendente;
 
+    public Participante() {
+        super();
+    }
+
     public Participante(String cpf, String nome, String senha,
                         LocalDate dataNascimento, String titulacaoAcademica, String instituicaoDeVinculo) {
         super(cpf, nome, dataNascimento, titulacaoAcademica, instituicaoDeVinculo);

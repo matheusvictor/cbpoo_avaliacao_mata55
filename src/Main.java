@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import static models.Artigo.MAX_AUTORES;
+import static models.Artigo.QTD_PALAVRAS_CHAVE;
 import static services.ConversorData.converterDataParaLocalDate;
 
 public class Main {
@@ -285,48 +287,113 @@ public class Main {
     public static void imprimirMenuCadastroArtigo() {
 
         ArrayList<Participante> autores = new ArrayList<>();
-        Artigo artigo;
+        Artigo artigo = new Artigo();
         String cpf;
 
         Participante autorPrincipal = null;
 
-        try {
-            System.out.print("Digite o CPF do autor principal: ");
-            cpf = scanner.next().trim();
-            autorPrincipal = congresso.buscarParticipantePorCpf(cpf);
+        System.out.print("Digite o título do artigo: ");
+        artigo.setTitulo(scanner.next());
 
-            System.out.println("==");
-            if (autorPrincipal.isInscricaoValida()) {
-                System.out.println("Vamos cadastrar o artigo");
-                autores.add(autorPrincipal);
+        System.out.print("Digite o resumo do artigo: ");
+        artigo.setResumo(scanner.next());
 
-                System.out.println("Existem outros autores(as)?");
+        int contadorPalavrasChave = 1;
+        do {
+            try {
+                System.out.print("Digite a " + contadorPalavrasChave + "ª palavra-chave: ");
+                artigo.addPalavraChave(scanner.next());
+            } catch (NumeroMaximoPalavrasChaveException exception) {
+                System.out.println(exception.getMessage());
+            }
+            contadorPalavrasChave++;
+        } while (contadorPalavrasChave <= QTD_PALAVRAS_CHAVE);
 
-                if (autores.size() < 2) {
-                    Participante coAutor = imprimirMenuCadastro();
-                    autores.add(coAutor);
-                } else {
-                    System.out.println("Acabou");
+        System.out.print("Digite a qtd. de páginas do artigo: ");
+        artigo.setQuantidadeDePaginas(scanner.nextInt()); //TODO: criar exceção para tipo de entrada
+
+        if (usuarioLogado != null) {
+            try {
+                artigo.addAutor((Autor) usuarioLogado);
+
+            } catch (NumeroMaximoAutoresException exception) {
+                System.out.println(exception.getMessage());
+            }
+        } else {
+
+            try {
+                System.out.print("Digite o CPF do(a) autor(a) principal: ");
+                cpf = scanner.next().trim();
+                autorPrincipal = congresso.buscarParticipanteValidoPorCpf(cpf);
+
+                if (autorPrincipal instanceof RootAdmin) {
+                    throw new ParticipanteNaoEncontradoException();
                 }
 
-            } else if (autorPrincipal.isValidacaoPendente()) {
-                System.out.println(new InscricaoPendenteException().getMessage());
+                artigo.addAutor((Autor) autorPrincipal);
 
-            } else {
-                System.out.println(new InscricaoRecusadaException().getMessage());
+            } catch (ParticipanteNaoEncontradoException | InscricaoPendenteException | InscricaoRecusadaException |
+                     NumeroMaximoAutoresException e) {
+                System.out.println(e.getMessage());
+                return;
             }
-            System.out.println("==");
 
-        } catch (ParticipanteNaoEncontradoException e) {
-            System.out.println(e.getMessage());
-        }
-
-        if (autorPrincipal == null) {
-            System.out.println("Realizando cadastro..."); //TODO: A ideia é que pergunte se deseja cadastrar, etc.
-            autorPrincipal = imprimirMenuCadastro();
         }
 
 
+        do {
+            System.out.print("Deseja cadastrar um(a) co-autor(a)? [S/N] ");
+            String opcao = scanner.next().trim().toUpperCase();
+
+            if (opcao.startsWith("N")) {
+                break;
+            } else {
+                System.out.print("CPF do(a) co-autor(a): ");
+                cpf = scanner.next();
+
+                System.out.print("Nome do(a) co-autor(a): ");
+                String nome = scanner.next();
+
+                LocalDate data;
+                while (true) {
+                    System.out.print("Data de Nascimento (dd/mm/aaaa) do(a) co-autor(a): ");
+                    String dataNascimentoCoAutor = scanner.next();
+                    try {
+                        data = converterDataParaLocalDate(dataNascimentoCoAutor);
+                        break;
+                    } catch (Exception exception) {
+                        System.out.println(exception.getMessage());
+                    }
+                }
+
+                LocalDate dataNascimentoFormatada;
+                while (true) {
+                    System.out.print("Informe a data de nascimento (dd/MM/aaaa): ");
+                    String dataNascimento = scanner.next();
+                    try {
+                        dataNascimentoFormatada = converterDataParaLocalDate(dataNascimento);
+                        break;
+                    } catch (Exception exception) {
+                        System.out.println(exception.getMessage());
+                    }
+                }
+
+                System.out.print("Titulação acadêmica do(a) co-autor(a): ");
+                String titulacaoAcademica = scanner.next();
+
+                System.out.print("Instituição de vínculo do(a) co-autor(a): ");
+                String instituicaoDeVinculo = scanner.next();
+
+                Autor coAutor = new Autor(cpf, nome, dataNascimentoFormatada, titulacaoAcademica, instituicaoDeVinculo);
+
+                try {
+                    artigo.addAutor(coAutor);
+                } catch (NumeroMaximoAutoresException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+
+        } while (artigo.getAutores().size() < MAX_AUTORES);
     }
 
     private static void executarMenuValidacaoParticipante() {
@@ -395,14 +462,6 @@ public class Main {
                 "CBPOO"
         );
         congresso.addParticipante(rootAdmin);
-
-        Artigo artigo = new Artigo(
-                "Lorem Ipsum",
-                "Resumo",
-                new ArrayList<>(),
-                12
-        );
-        congresso.addArtigo(artigo);
 
         executarMenuPrincipal();
     }

@@ -77,9 +77,9 @@ public class Congresso {
         return participante;
     }
 
-    public Participante buscarParticipanteValidoPorCpf(String cpf) throws ParticipanteNaoEncontradoException, InscricaoPendenteException, InscricaoRecusadaException {
+    public Participante buscarParticipanteValidoPorCpf(String cpf)
+            throws ParticipanteNaoEncontradoException, InscricaoPendenteException, InscricaoRecusadaException {
         Participante participante = buscarParticipantePorCpf(cpf);
-
 
         if (participante.isValidacaoPendente()) {
             throw new InscricaoPendenteException();

@@ -10,10 +10,9 @@ public abstract class Especialista extends Participante {
 
     private String especialidade;
 
-    public Especialista(String cpf, String nome, String senha, LocalDate dataNascimento,
-                        String titulacaoAcademica, String instituicaoDeVinculo, String especialidade) {
-        super(cpf, nome, senha, dataNascimento, titulacaoAcademica, instituicaoDeVinculo);
-        this.especialidade = especialidade;
+    public Especialista(String cpf, String nome, LocalDate dataNascimento,
+                        String titulacaoAcademica, String instituicaoDeVinculo) {
+        super(cpf, nome, "", dataNascimento, titulacaoAcademica, instituicaoDeVinculo);
     }
 
     public String getEspecialidade() {

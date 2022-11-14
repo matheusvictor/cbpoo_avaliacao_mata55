@@ -9,10 +9,10 @@ public class Revisor extends Especialista {
 
     private ArrayList<Artigo> artigosRevisados;
 
-    public Revisor(String cpf, String nome, LocalDate dataNascimento,
-                   String titulacaoAcademica, String instituicaoDeVinculo, String especialidade) {
-        super(cpf, nome, dataNascimento, titulacaoAcademica, instituicaoDeVinculo, especialidade);
-        this.artigosRevisados = new ArrayList<>();
+    public Revisor(String cpf, String nome, LocalDate dataNascimento, String titulacaoAcademica,
+                   String instituicaoDeVinculo, ArrayList<Artigo> artigosRevisados) {
+        super(cpf, nome, dataNascimento, titulacaoAcademica, instituicaoDeVinculo);
+        this.artigosRevisados = artigosRevisados;
     }
 
     public void avaliarArtigo(Artigo artigo, String avaliacao) {
