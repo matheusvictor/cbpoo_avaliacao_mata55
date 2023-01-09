@@ -1,12 +1,11 @@
 package models;
 
 import exceptions.*;
-import models.especialistas.Autor;
 import models.organizadores.RootAdmin;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class Congresso {
 
@@ -97,8 +96,10 @@ public class Congresso {
             if (p instanceof RootAdmin) {
                 continue;
             }
-            System.out.println(indice + ". " + p);
-            indice++;
+            if (p.isInscricaoValida()) {
+                System.out.println(indice + ". " + p);
+                indice++;
+            }
         }
     }
 
